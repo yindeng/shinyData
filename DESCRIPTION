@@ -1,8 +1,8 @@
 Package: shinyData
-Title: What the package does (one line)
+Title: A tool for interactive data analysis, visualization and presentation
 Version: 0.1
-Authors@R: "First Last <first.last@example.com> [aut, cre]"
-Description: What the package does (one paragraph)
+Authors@R: "Yindeng Jiang <jiangyindeng@gmail.com>"
+Description: A tool for interactive data analysis, visualization and presentation, built with r packages shiny, ggplot2 and others.
 Depends: R (>= 3.1.2)
-License: What license is it under?
+License: MIT
 LazyData: true
