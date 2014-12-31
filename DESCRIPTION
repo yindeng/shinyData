@@ -1,10 +1,15 @@
 Package: shinyData
 Type: Package
-Title: A tool for interactive data analysis, visualization and presentation
+Title: An intuitive graphical user interface for interactive data analysis, visualization and presentation
 Version: 0.1
 Authors@R: "Yindeng Jiang <jiangyindeng@gmail.com> [aut, cre]"
-Description: A tool for interactive data analysis, visualization and presentation, built with r packages shiny, ggplot2 and others.
-Depends: R (>= 3.1.2)
+Description:
+  shinyData is intended to be an easy to use tool for interactive data analysis, visualization and presentation.
+  It leverages the power of R and its vast collection of packages to allow users to efficiently perform common
+  data tasks, such as slicing and dicing, aggregation, pattern recognition, visualization and more.
+  Minimal knowledge of R programming is required to use shinyData.
+Suggests:
+  shiny, reshape, ggplot2, Hmisc, uuid, plotly, tables, tools, png, plyr, shinysky, Cairo
 License: MIT
 LazyData: true
 URL: http://github.com/yindeng/shinyData
