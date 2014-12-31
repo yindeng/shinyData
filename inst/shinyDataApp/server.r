@@ -1,5 +1,5 @@
 
-source('helpers.r', local=T)
+source('helpers.r', local=TRUE)
 
 shinyServer(function(input, output, session) {
 
@@ -38,11 +38,11 @@ shinyServer(function(input, output, session) {
                                                                      ]][['layerList']][[currentLayer]][['aesList']][[currentAes]]
                                    measures <- sheetList[[currentSheet]][['measuresR']]()
                                    field <- aes[['aesField']]
-                                   if(is.empty(field)){
+                                   if(isEmpty(field)){
                                      field <- sheetList[[currentSheet]][['dynamicProperties'
                                                ]][['layerList']][['Plot']][['aesList']][[currentAes]][['aesField']]
                                    }
-                                   aes[['aesAggregate']] || (!is.empty(field) && field %in% measures)              
+                                   aes[['aesAggregate']] || (!isEmpty(field) && field %in% measures)              
                                  })
     })
   }
@@ -72,7 +72,7 @@ shinyServer(function(input, output, session) {
         if(isFieldUninitialized(sheetList[[currentSheet]],'layerNames')){
           sheetList[[currentSheet]][['layerNames']] <<- reactive({
             sl <- isolate(sheetList)
-            if(!is.empty(sl[[currentSheet]][['dynamicProperties']][['layerList']])){
+            if(!isEmpty(sl[[currentSheet]][['dynamicProperties']][['layerList']])){
               names(sl[[currentSheet]][['dynamicProperties']][['layerList']])              
             } else c() 
           })
@@ -86,7 +86,7 @@ shinyServer(function(input, output, session) {
             currentDat <- sl[[currentSheet]][['dynamicProperties']][['datId']]
             combineMeasures <- sl[[currentSheet]][['dynamicProperties']][['combineMeasures']]
             
-            if(!is.empty(currentDat)){
+            if(!isEmpty(currentDat)){
               currentDatObj <- dl[[currentDat]] 
               if(combineMeasures) currentDatObj[['moltenNames']]() else currentDatObj[['fieldNames']]()
             }
@@ -100,7 +100,7 @@ shinyServer(function(input, output, session) {
             currentDat <- sl[[currentSheet]][['dynamicProperties']][['datId']]
             combineMeasures <- sl[[currentSheet]][['dynamicProperties']][['combineMeasures']]
             
-            if(!is.empty(currentDat)){
+            if(!isEmpty(currentDat)){
               currentDatObj <- dl[[currentDat]] 
               if(combineMeasures) c(MoltenMeasuresName) else currentDatObj[['dynamicProperties']][['measures']]
             }
@@ -114,7 +114,7 @@ shinyServer(function(input, output, session) {
             currentDat <- sl[[currentSheet]][['dynamicProperties']][['datId']]
             combineMeasures <- sl[[currentSheet]][['dynamicProperties']][['combineMeasures']]
             
-            if(!is.empty(currentDat)){
+            if(!isEmpty(currentDat)){
               currentDatObj <- dl[[currentDat]] 
               if(combineMeasures) currentDatObj[['moltenDat']]() else currentDatObj[['datR']]()
             }
@@ -152,7 +152,7 @@ shinyServer(function(input, output, session) {
             cc <- empty2NULL(sl[[currentSheet]][['dynamicProperties']][['columns']])
             rr <- empty2NULL(sl[[currentSheet]][['dynamicProperties']][['rows']])
             datSheet <- sl[[currentSheet]][['datR']]()
-            validate(need(!is.empty(datSheet), label='Data'))
+            validate(need(!isEmpty(datSheet), label='Data'))
             
             gg <- NULL            
             for(i in c('bar','line','point')) update_geom_defaults(i, list(colour = "darkblue", fill = "darkblue"))
@@ -170,7 +170,7 @@ shinyServer(function(input, output, session) {
               
               if(!is.null(geom) && !is.null(stat) && !is.null(position)){
                 ## get effective aesthetics taking into account of inheritance
-                aes.current <- layer.current[['aesList']][isolate(unlist(layer.current[['aesChoices']], use.names=F))]                
+                aes.current <- layer.current[['aesList']][isolate(unlist(layer.current[['aesChoices']], use.names=FALSE))]                
                 aes.current <- sapply(names(aes.current), function(n){
                   temp <- reactiveValuesToList(aes.current[[n]]) # converting to list so we can modify it
                   if(are.vectors.different(temp[['aesMapOrSet']],'set')){
@@ -183,7 +183,7 @@ shinyServer(function(input, output, session) {
                     }
                   }                  
                   temp
-                }, simplify=F)
+                }, simplify=FALSE)
                 aes.current <- aes.current[sapply(aes.current, 
                      function(x) !are.vectors.different(x[['aesMapOrSet']],'set') || !is.null(x[['aesField']]))]
                 
@@ -246,7 +246,7 @@ shinyServer(function(input, output, session) {
                   # some validation
                   agg.fields <- sapply(aes.toAgg, function(x) x[['aesFieldOriginal']])
                   overlaps <- intersect(agg.fields, c(rr,cc))
-                  validate(need(is.empty(overlaps), 'Can not aggregate fields used in faceting.'))
+                  validate(need(isEmpty(overlaps), 'Can not aggregate fields used in faceting.'))
                   
                   # build the call for ddply
                   .args <- lapply(aes.toAgg, function(x) parse(text=paste(x[['aesAggFun']], '(', x[['aesFieldOriginal']], ')', sep=''))[[1]])
@@ -338,7 +338,7 @@ shinyServer(function(input, output, session) {
               }              
             }
             if(!is.null(gg)){
-              if(!is.empty(cc) || !is.empty(rr)){
+              if(!isEmpty(cc) || !isEmpty(rr)){
                 gg <- gg + facet_grid(as.formula(paste(names2formula(rr), names2formula(cc), sep=" ~ ")))
               }
               gg <- gg + theme_bw()
@@ -357,13 +357,13 @@ shinyServer(function(input, output, session) {
             
             gg <- sl[[currentSheet]][['plotCore']]()
             if(!is.null(gg)){
-              if(!is.empty(aes.base[['aesX']][['aesField']])){
+              if(!isEmpty(aes.base[['aesX']][['aesField']])){
                 i.match <- match(aes.base[['aesX']][['aesField']], fieldNames)
                 if(!is.na(i.match)){
                   gg <- gg + xlab(names(fieldNames)[i.match])
                 }
               }
-              if(!is.empty(aes.base[['aesY']][['aesField']])){
+              if(!isEmpty(aes.base[['aesY']][['aesField']])){
                 i.match <- match(aes.base[['aesY']][['aesField']], fieldNames)
                 if(!is.na(i.match)){
                   gg <- gg + ylab(names(fieldNames)[i.match])
@@ -390,20 +390,20 @@ shinyServer(function(input, output, session) {
   isDatBasedonSheet <- function(datId, sheetId){ 
     if(!is.null(datList[[datId]])){
       while(datList[[datId]][['staticProperties']][['type']] == 'sheet'){
-        if(datId==sheetId) return(T)
+        if(datId==sheetId) return(TRUE)
         datId <- sheetList[[datId]][['dynamicProperties']][['datId']]
       }
     }
-    F
+    FALSE
   }
   
   
   
   
 
-  source('data.r', local=T)
-  source('sheets.r', local=T)
-  source('project.r', local=T)
+  source('data.r', local=TRUE)
+  source('sheets.r', local=TRUE)
+  source('project.r', local=TRUE)
   
   
 })

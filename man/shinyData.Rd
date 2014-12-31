@@ -7,9 +7,6 @@
 shinyData()
 }
 \description{
-Run shinyData
-}
-\examples{
-shinyData()
+This will open your default browser and run shinyData locally on your computer.
 }
 

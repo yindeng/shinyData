@@ -7,7 +7,7 @@
 ## Plotly or animit
 
 ## conditional calculated field: mutate and ddply; see documentation for ddply
-## groups: use selectInput with multiple=T and selectize = F
+## groups: use selectInput with multiple=TRUE and selectize = FALSE
 ## DONE: add sample data mtcars
 ## http://stackoverflow.com/questions/3418128/how-to-convert-a-factor-to-an-integer-numeric-without-a-loss-of-information
 
@@ -17,7 +17,7 @@
 
 #options(error = browser)
 options(shiny.error=NULL) # NULL
-options(shiny.trace = F)  # cahnge to T for trace
+options(shiny.trace = FALSE)  # change to TRUE for trace
 #options(shiny.reactlog=TRUE)
 
 require(shiny); require(reshape); require(ggplot2); require(Hmisc); require(uuid); require(plotly);
@@ -139,7 +139,7 @@ getAesChoices <- function(geom, stat='identity'){
   )
 }
 
-AesChoicesSimpleList <- unique(unlist(lapply(GeomChoices, getAesChoices), use.names=F))
+AesChoicesSimpleList <- unique(unlist(lapply(GeomChoices, getAesChoices), use.names=FALSE))
 
 fonttable <- read.table(header=TRUE, sep=",", stringsAsFactors=FALSE,
                         text='

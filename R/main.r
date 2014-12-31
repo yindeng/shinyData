@@ -1,8 +1,8 @@
 #' Run shinyData
 #'
+#' This will open your default browser and run shinyData locally on your computer.
+#'
 #' @export
-#' @examples
-#' shinyData()
 shinyData <- function() {
   shiny::runApp(file.path(system.file("shinyDataApp", package = "shinyData")))
 }

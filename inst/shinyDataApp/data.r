@@ -3,7 +3,7 @@
 observe({
   v <- input$datList
   isolate({
-    if(!is.empty(input$datList)) projProperties[['activeDat']] <<- v
+    if(!isEmpty(input$datList)) projProperties[['activeDat']] <<- v
   })    
 })
 observe({
@@ -18,8 +18,8 @@ observe({
   v <- input$datName
   isolate({
     currentDat <- (projProperties[['activeDat']])
-    if(!is.empty(currentDat)){
-      if(!is.empty(v) && is.empty(datListNames()[v])){
+    if(!isEmpty(currentDat)){
+      if(!isEmpty(v) && isEmpty(datListNames()[v])){
         datList[[currentDat]][['dynamicProperties']][['name']] <<- v
       } 
     }
@@ -29,7 +29,7 @@ observe({
 observe({
   updateInput[['datName']]
   currentDat <- projProperties[['activeDat']]
-  s <- if(!is.empty(currentDat)){
+  s <- if(!isEmpty(currentDat)){
     isolate(datList[[currentDat]][['dynamicProperties']][['name']])
   } else ''
   updateTextInput(session, 'datName', value=null2String(s))
@@ -40,7 +40,7 @@ observe({
   activeField <- input$fieldsList
   isolate({
     currentDat <- (projProperties[['activeDat']])
-    if(!is.empty(currentDat)){
+    if(!isEmpty(currentDat)){
       datList[[currentDat]][['dynamicProperties']][['activeField']] <<- activeField
     }
   })
@@ -49,10 +49,10 @@ observe({
 observe({
   updateInput[['activeField']]
   currentDat <- projProperties[['activeDat']]
-  s <- if(!is.empty(currentDat)){
+  s <- if(!isEmpty(currentDat)){
     isolate(datList[[currentDat]][['dynamicProperties']][['activeField']])
   } else ''
-  choices <- if(!is.empty(currentDat)) datList[[currentDat]][['fieldNames']]()
+  choices <- if(!isEmpty(currentDat)) datList[[currentDat]][['fieldNames']]()
   updateSelectizeInput(session, "fieldsList", choices=null2String(choices), 
                        selected=null2String(s))
 })
@@ -62,10 +62,10 @@ observe({
   v <- (input$fieldName) #make.names
   isolate({
     currentDat <- (projProperties[['activeDat']])    
-    if(!is.empty(currentDat)){
+    if(!isEmpty(currentDat)){
       currentField <- (datList[[currentDat]][['dynamicProperties']][['activeField']])
-      if(!is.empty(currentField)){
-        if(!is.empty(v) && is.empty((datList[[currentDat]][['fieldNames']]())[v])){
+      if(!isEmpty(currentField)){
+        if(!isEmpty(v) && isEmpty((datList[[currentDat]][['fieldNames']]())[v])){
           datList[[currentDat]][['dynamicProperties']][['fieldsList']][[currentField]][['name']] <<- v
           if(v!=input$fieldName) triggerUpdateInput('fieldName')
         } 
@@ -78,9 +78,9 @@ observe({
   updateInput[['fieldName']]
   currentDat <- projProperties[['activeDat']]
   s <- ''
-  if(!is.empty(currentDat)){
+  if(!isEmpty(currentDat)){
     currentField <- datList[[currentDat]][['dynamicProperties']][['activeField']]
-    if(!is.empty(currentField)){
+    if(!isEmpty(currentField)){
       s <- isolate(datList[[currentDat]][['dynamicProperties']][['fieldsList']][[currentField]][['name']])
     }
   }
@@ -92,7 +92,7 @@ observe({
   newMeasures <- input$measures
   isolate({
     currentDat <- (projProperties[['activeDat']])
-    if(!is.empty(currentDat)){
+    if(!isEmpty(currentDat)){
       datList[[currentDat]][['dynamicProperties']][['measures']] <<- newMeasures
     } 
   })    
@@ -100,10 +100,10 @@ observe({
 observe({
   updateInput[['measures']]
   currentDat <- projProperties[['activeDat']]
-  s <- if(!is.empty(currentDat)){
+  s <- if(!isEmpty(currentDat)){
     isolate(datList[[currentDat]][['dynamicProperties']][['measures']])
   } else ''
-  choices <- if(!is.empty(currentDat)) datList[[currentDat]][['fieldNames']]()
+  choices <- if(!isEmpty(currentDat)) datList[[currentDat]][['fieldNames']]()
   updateSelectizeInput(session, "measures", choices=null2String(choices), 
                        selected=null2String(s))
 })
@@ -133,13 +133,13 @@ observe({
 })
 
 output$uploadingTextFile <- reactive({
-  T
+  TRUE
 })
 outputOptions(output, "uploadingTextFile", suspendWhenHidden=FALSE)
 
 output$datPreview <- renderDataTable({
   currentDat <- projProperties[['activeDat']]
-  if(!is.empty(currentDat)){
+  if(!isEmpty(currentDat)){
     datPrev <- datList[[currentDat]][['datR']]()
     names(datPrev) <- names(datList[[currentDat]][['fieldNames']]())
     datPrev

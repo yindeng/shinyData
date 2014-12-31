@@ -21,7 +21,7 @@ make.png <- function(obj, resolution=NULL) {
       ')
   sink()
   wd <- setwd(tempdir()); on.exit(setwd(wd))
-  texi2dvi(file=texFile, index=F)
+  texi2dvi(file=texFile, index=FALSE)
   
   cmd <- paste("dvipng -T tight -o", 
                shQuote(pngFile), 
@@ -34,7 +34,7 @@ make.png <- function(obj, resolution=NULL) {
 }
 
 newGuid <- function(){
-  gsub("-", "_", UUIDgenerate(), fixed=T)
+  gsub("-", "_", UUIDgenerate(), fixed=TRUE)
   
   #paste(sample(c(letters[1:6],0:9),30,replace=TRUE),collapse="")
 }
@@ -49,7 +49,7 @@ setdiff.c <<- function(x, y){
     z
   } else z  
 }
-is.empty <<- function(x){
+isEmpty <<- function(x){
   is.null(x) || length(x)==0 || all(is.na(x)) || all(x=='')
 }
 
@@ -57,7 +57,7 @@ ifnull <- function(x, d){
   if(is.null(x)) d else x
 }
 ifempty <- function(x, d){
-  if(is.empty(x)) d else x
+  if(isEmpty(x)) d else x
 }
 
 null2String <- function(x){
@@ -82,7 +82,7 @@ convertSheetNameToDatName <- function(sheetName){
 }
 
 names2formula <- function(nms){
-  if(!is.empty(nms)){
+  if(!isEmpty(nms)){
     paste(nms, collapse=" + ")
   } else " . "
 }
@@ -92,10 +92,10 @@ isFieldUninitialized <- function(obj, field){
 }
 
 are.vectors.different <- function(x, y){
-  if(is.empty(x)){
-    !is.empty(y)
+  if(isEmpty(x)){
+    !isEmpty(y)
   } else {
-    is.empty(y) || any(x!=y)
+    isEmpty(y) || any(x!=y)
   }
 }
 
@@ -135,7 +135,7 @@ DatClass <- setRefClass("DatClass", fields=c("staticProperties","dynamicProperti
                           
                           measureName <- 'MeasureNames'
                           moltenDat <<- reactive({
-                            if(!is.empty(dynamicProperties[['measures']])){
+                            if(!isEmpty(dynamicProperties[['measures']])){
                               melt(datR(), measure.vars=dynamicProperties[['measures']], 
                                    variable_name=measureName)
                             }                            
@@ -175,13 +175,13 @@ createNewLayer <- function(){
   reactiveValues('geom'='point', 'statType'='identity', 'yFun'='sum', 'layerPositionType'='identity',
                  'activeAes'='aesX',
                  'aesList'=sapply(AesChoicesSimpleList, 
-                                  function(x) reactiveValues('aesAggregate'=F,'aesDiscrete'=T,'aesMapOrSet'='map'), simplify=F))
+                                  function(x) reactiveValues('aesAggregate'=FALSE,'aesDiscrete'=TRUE,'aesMapOrSet'='map'), simplify=FALSE))
 }
 createNewSheetObj <- function(name='Sheet'){
   SheetClass$new(
     'dynamicProperties'=reactiveValues(
       'name'=name, 
-      'datId'='', 'combineMeasures'=F, 'outputType'='plot',
+      'datId'='', 'combineMeasures'=FALSE, 'outputType'='plot',
       'columns'='', 'colChoices'='',
       'rows'='', 'rowChoices'='',
       'outputTable'=NULL,

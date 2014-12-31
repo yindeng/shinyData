@@ -10,7 +10,7 @@ Description:
   Minimal knowledge of R programming is required to use shinyData.
 Suggests:
   shiny, reshape, ggplot2, Hmisc, uuid, plotly, tables, tools, png, plyr, shinysky, Cairo
-License: MIT
+License: MIT + file LICENSE
 LazyData: true
 URL: http://github.com/yindeng/shinyData
 BugReports: http://github.com/yindeng/shinyData/issues

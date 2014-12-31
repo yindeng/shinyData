@@ -7,9 +7,9 @@
 ## Sheet input interdependence
 observe({
   currentSheet <- projProperties[['activeSheet']]
-  if(!is.empty(currentSheet)){    
+  if(!isEmpty(currentSheet)){    
     currentLayer <- sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']]
-    if(!is.empty(currentLayer)){
+    if(!isEmpty(currentLayer)){
       markType <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['geom']]
       stat <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['statType']]
       isolate({
@@ -47,7 +47,7 @@ observe({
       
       cChoices <- setdiff.c(dims, c(all.x, all.y, rr1))
       rChoices <- setdiff.c(dims, c(all.x, all.y, cc1))    
-      if(!is.empty(currentLayer)){
+      if(!isEmpty(currentLayer)){
         isolate({
           sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][['aesX']][['fieldChoices']] <<- 
             setdiff.c(fields, c(rr1, cc1))
@@ -124,7 +124,7 @@ observe({
 observe({
   v <- input$sheetList
   isolate({
-    if(!is.empty(v)) projProperties[['activeSheet']] <<- v
+    if(!isEmpty(v)) projProperties[['activeSheet']] <<- v
   })
   
 })
@@ -140,8 +140,8 @@ observe({
   v <- input$sheetName
   isolate({
     currentSheet <- (projProperties[['activeSheet']])
-    if(!is.empty(currentSheet)){
-      if(!is.empty(v) && is.empty(isolate(sheetListNames())[v])){
+    if(!isEmpty(currentSheet)){
+      if(!isEmpty(v) && isEmpty(isolate(sheetListNames())[v])){
         sheetList[[currentSheet]][['dynamicProperties']][['name']] <<- v
       } 
     }    
@@ -151,7 +151,7 @@ observe({
 observe({
   updateInput[['sheetName']]
   currentSheet <- projProperties[['activeSheet']]
-  s <- if(!is.empty(currentSheet)){
+  s <- if(!isEmpty(currentSheet)){
     isolate(sheetList[[currentSheet]][['dynamicProperties']][['name']])
   } else ''
   updateTextInput(session, 'sheetName', value=null2String(s))
@@ -160,7 +160,7 @@ observe({
 ## link sheet name to corresponding data name
 observe({
   currentSheet <- projProperties[['activeSheet']]
-  if(!is.empty(currentSheet)){
+  if(!isEmpty(currentSheet)){
     s <- sheetList[[currentSheet]][['dynamicProperties']][['name']]
     isolate({
       if(!is.null(datList[[currentSheet]])){
@@ -176,14 +176,14 @@ observe({
   v <- input$sheetDatList
   isolate({
     currentSheet <- (projProperties[['activeSheet']])
-    if(!is.empty(currentSheet)) sheetList[[currentSheet]][['dynamicProperties']][['datId']] <<- v
+    if(!isEmpty(currentSheet)) sheetList[[currentSheet]][['dynamicProperties']][['datId']] <<- v
   })
   
 })
 observe({
   updateInput[['sheetDatId']]
   currentSheet <- projProperties[['activeSheet']]
-  s <- if(!is.empty(currentSheet)){
+  s <- if(!isEmpty(currentSheet)){
     isolate(sheetList[[currentSheet]][['dynamicProperties']][['datId']])
   } else ''
   choices <- datListNames()
@@ -197,7 +197,7 @@ observe({
   v <- input$combineMeasures
   isolate({
     currentSheet <- (projProperties[['activeSheet']])
-    if(!is.empty(currentSheet)){
+    if(!isEmpty(currentSheet)){
       sheetList[[currentSheet]][['dynamicProperties']][['combineMeasures']] <<- as.logical(v)
     } 
   })
@@ -206,9 +206,9 @@ observe({
 observe({
   updateInput[['combineMeasures']]
   currentSheet <- projProperties[['activeSheet']]
-  s <- if(!is.empty(currentSheet)){
+  s <- if(!isEmpty(currentSheet)){
     isolate(sheetList[[currentSheet]][['dynamicProperties']][['combineMeasures']])
-  } else F
+  } else FALSE
   updateCheckboxInput(session, 'combineMeasures', value=null2String(s))
 })
 
@@ -217,17 +217,17 @@ observe({
   v <- input$columns
   isolate({
     currentSheet <- (projProperties[['activeSheet']])
-    if(!is.empty(currentSheet)) sheetList[[currentSheet]][['dynamicProperties']][['columns']] <<- v
+    if(!isEmpty(currentSheet)) sheetList[[currentSheet]][['dynamicProperties']][['columns']] <<- v
   })
   
 })
 observe({
   updateInput[['sheetColumns']]
   currentSheet <- projProperties[['activeSheet']]
-  s <- if(!is.empty(currentSheet)){
+  s <- if(!isEmpty(currentSheet)){
     isolate(sheetList[[currentSheet]][['dynamicProperties']][['columns']])
   } else ''
-  choices <- if(!is.empty(currentSheet)){sheetList[[currentSheet]][['dynamicProperties']][['colChoices']]} else ''   
+  choices <- if(!isEmpty(currentSheet)){sheetList[[currentSheet]][['dynamicProperties']][['colChoices']]} else ''   
   updateSelectizeInput(session, 'columns', choices=null2String(choices), selected=null2String(s))
 })
 
@@ -236,17 +236,17 @@ observe({
   v <- input$rows
   isolate({
     currentSheet <- (projProperties[['activeSheet']])
-    if(!is.empty(currentSheet)) sheetList[[currentSheet]][['dynamicProperties']][['rows']] <<- v
+    if(!isEmpty(currentSheet)) sheetList[[currentSheet]][['dynamicProperties']][['rows']] <<- v
   })
   
 })
 observe({
   updateInput[['sheetRows']]
   currentSheet <- projProperties[['activeSheet']]
-  s <- if(!is.empty(currentSheet)){
+  s <- if(!isEmpty(currentSheet)){
     isolate(sheetList[[currentSheet]][['dynamicProperties']][['rows']])
   } else ''
-  choices <- if(!is.empty(currentSheet)){sheetList[[currentSheet]][['dynamicProperties']][['rowChoices']]} else ''
+  choices <- if(!isEmpty(currentSheet)){sheetList[[currentSheet]][['dynamicProperties']][['rowChoices']]} else ''
   updateSelectizeInput(session, 'rows', choices=null2String(choices), selected=null2String(s))
 })  
 
@@ -255,14 +255,14 @@ observe({
   v <- input$outputTypeList
   isolate({
     currentSheet <- (projProperties[['activeSheet']])
-    if(!is.empty(currentSheet)) sheetList[[currentSheet]][['dynamicProperties']][['outputType']] <<- v
+    if(!isEmpty(currentSheet)) sheetList[[currentSheet]][['dynamicProperties']][['outputType']] <<- v
   })
   
 })
 observe({
   updateInput[['sheetOutput']]
   currentSheet <- projProperties[['activeSheet']]
-  s <- if(!is.empty(currentSheet)){
+  s <- if(!isEmpty(currentSheet)){
     isolate(sheetList[[currentSheet]][['dynamicProperties']][['outputType']])
   } else ''
   updateSelectInput(session, 'outputTypeList', selected=null2String(s))
@@ -272,19 +272,19 @@ observe({
 observe({
   v <- input$layerList
   isolate({
-    if(!is.empty(v)){
+    if(!isEmpty(v)){
       currentSheet <- (projProperties[['activeSheet']])
-      if(!is.empty(currentSheet)) sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']] <<- v
+      if(!isEmpty(currentSheet)) sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']] <<- v
     }    
   })  
 })
 observe({
   updateInput[['sheetPlotLayer']]
   currentSheet <- projProperties[['activeSheet']]
-  s <- if(!is.empty(currentSheet)){
+  s <- if(!isEmpty(currentSheet)){
     isolate(sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
   } else ''
-  choices <- if(!is.empty(currentSheet)) sheetList[[currentSheet]][['layerNames']]()
+  choices <- if(!isEmpty(currentSheet)) sheetList[[currentSheet]][['layerNames']]()
   updateSelectInput(session, 'layerList', choices=null2String(choices), 
                     selected=null2String(s))
 })
@@ -293,11 +293,11 @@ observe({
 observe({
   v <- input$aesList
   isolate({
-    if(!is.empty(v)){
+    if(!isEmpty(v)){
       currentSheet <- (projProperties[['activeSheet']])
-      if(!is.empty(currentSheet)) {
+      if(!isEmpty(currentSheet)) {
         currentLayer <- sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']]
-        if(!is.empty(currentLayer)){
+        if(!isEmpty(currentLayer)){
           sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']] <<- v
         }
       }
@@ -308,9 +308,9 @@ observe({
   updateInput[['sheetLayerAes']]
   currentSheet <- projProperties[['activeSheet']]
   s <- choices <- ''
-  if(!is.empty(currentSheet)){
+  if(!isEmpty(currentSheet)){
     currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-    if(!is.empty(currentLayer)){
+    if(!isEmpty(currentLayer)){
       s <- isolate(sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']])
       choices <- (sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesChoices']])
     }    
@@ -326,15 +326,15 @@ observe({
   if(!is.null(v)){
     isolate({
       currentSheet <- (projProperties[['activeSheet']])
-      if(!is.empty(currentSheet)){
+      if(!isEmpty(currentSheet)){
         currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-        if(!is.empty(currentLayer)){
+        if(!isEmpty(currentLayer)){
           currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
-          if(!is.empty(currentAes)){
+          if(!isEmpty(currentAes)){
             sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesMapOrSet']] <<- v
             
             ## set default value
-            if(v=='set' && is.empty(sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesValue']])){
+            if(v=='set' && isEmpty(sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesValue']])){
               sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesValue']] <<- 
                 switch(currentAes,
                        'aesLabel'='My Label', 'aesFamily'='Times', 'aesFontface'='plain',
@@ -356,11 +356,11 @@ observe({
   updateInput[['aesMapOrSet']]
   currentSheet <- (projProperties[['activeSheet']])
   s <- 'map'
-  if(!is.empty(currentSheet)){
+  if(!isEmpty(currentSheet)){
     currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-    if(!is.empty(currentLayer)){
+    if(!isEmpty(currentLayer)){
       currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
-      if(!is.empty(currentAes)){
+      if(!isEmpty(currentAes)){
         s1 <- isolate(sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesMapOrSet']])
         if(!are.vectors.different('set', s1)) s <- 'set'
       }      
@@ -372,11 +372,11 @@ observe({
 ## map or set UI
 output$mapOrSetUI <- renderUI({
   currentSheet <- (projProperties[['activeSheet']])
-  if(!is.empty(currentSheet)){
+  if(!isEmpty(currentSheet)){
     currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-    if(!is.empty(currentLayer)){
+    if(!isEmpty(currentLayer)){
       currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
-      if(!is.empty(currentAes)){
+      if(!isEmpty(currentAes)){
         useMapping <- are.vectors.different('set',
                                             sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesMapOrSet']])
         isolate({
@@ -397,7 +397,7 @@ output$mapOrSetUI <- renderUI({
             fluidRow(
               column(4,
                      selectizeInput(inputId='aesField', label='Field', 
-                                    choices=choices, selected=s, multiple=F,
+                                    choices=choices, selected=s, multiple=FALSE,
                                     options = list(create = TRUE))  
               ),
               column(4, 
@@ -406,7 +406,7 @@ output$mapOrSetUI <- renderUI({
                      conditionalPanel('input.aesAggregate==true', 
                                       selectizeInput(inputId='aesAggFun', label='By', 
                                                      choices=aggFunchoices,
-                                                     selected=aggFun, multiple=F,
+                                                     selected=aggFun, multiple=FALSE,
                                                      options = list(create = TRUE))
                      )
                      
@@ -417,7 +417,7 @@ output$mapOrSetUI <- renderUI({
                                                    choices=c('Continuous'='continuous',
                                                              'Discrete'='discrete'),
                                                    selected=ifelse(aes[['aesDiscrete']], 'discrete', 'continuous'), 
-                                                   inline=F)
+                                                   inline=FALSE)
                      )
                      
                      
@@ -442,17 +442,17 @@ output$mapOrSetUI <- renderUI({
 observe({
   v <- input$aesValue
   vColor <- input$aesValueColor
-  ## using is.empty instead of is.null below will cause aesValue not being able to be deleted by user
+  ## using isEmpty instead of is.null below will cause aesValue not being able to be deleted by user
   ## not ideal, but due to the inability of setting value on jscolorPicker
   isolate({
     currentSheet <- (projProperties[['activeSheet']])
-    if(!is.empty(currentSheet)){
+    if(!isEmpty(currentSheet)){
       currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-      if(!is.empty(currentLayer)){
+      if(!isEmpty(currentLayer)){
         currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
-        if(!is.empty(currentAes)){
-          if((currentAes=='aesColor' || currentAes=='aesBorderColor') && !is.empty(vColor)) v <- paste('#', vColor, sep='')
-          if(!is.empty(v)) sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesValue']] <<- v
+        if(!isEmpty(currentAes)){
+          if((currentAes=='aesColor' || currentAes=='aesBorderColor') && !isEmpty(vColor)) v <- paste('#', vColor, sep='')
+          if(!isEmpty(v)) sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesValue']] <<- v
         }        
       }      
     }
@@ -463,11 +463,11 @@ observe({
 #   updateInput[['aesValue']]
 #   currentSheet <- (projProperties[['activeSheet']])
 #   s <- 0
-#   if(!is.empty(currentSheet)){
+#   if(!isEmpty(currentSheet)){
 #     currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-#     if(!is.empty(currentLayer)){
+#     if(!isEmpty(currentLayer)){
 #       currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
-#       if(!is.empty(currentAes)){
+#       if(!isEmpty(currentAes)){
 #         s <- isolate(sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesValue']])
 #         switch(currentAes,
 #                'aesLabel'=updateTextInput(session, 'aesValue', value=s), 
@@ -489,16 +489,16 @@ observe({
   if(!is.null(v)){
     isolate({
       currentSheet <- (projProperties[['activeSheet']])
-      if(!is.empty(currentSheet)){
+      if(!isEmpty(currentSheet)){
         currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-        if(!is.empty(currentLayer)){
+        if(!isEmpty(currentLayer)){
           currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
-          if(!is.empty(currentAes)){
+          if(!isEmpty(currentAes)){
             if(are.vectors.different(v, sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesField']])){                      
               sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesField']] <<- v
               
               ## set default field properties
-              if(is.empty(v) && currentLayer != 'Plot'){
+              if(isEmpty(v) && currentLayer != 'Plot'){
                 v <- null2String(sheetList[[currentSheet]][['dynamicProperties']][['layerList']][['Plot']][['aesList']][[currentAes]][['aesField']])
               }
               is.measure <- v %in% sheetList[[currentSheet]][['measuresR']]()
@@ -518,11 +518,11 @@ observe({
 #   updateInput[['aesField']]
 #   currentSheet <- (projProperties[['activeSheet']])
 #   s <- choices <- ''
-#   if(!is.empty(currentSheet)){
+#   if(!isEmpty(currentSheet)){
 #     currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-#     if(!is.empty(currentLayer)){
+#     if(!isEmpty(currentLayer)){
 #       currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
-#       if(!is.empty(currentAes)){
+#       if(!isEmpty(currentAes)){
 #         s <- isolate(sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesField']])
 #         choices <- if(currentAes %in% c('aesX','aesY')) {
 #           sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['fieldChoices']]
@@ -537,13 +537,13 @@ observe({
 # })
 
 output$canAesFieldBeContinuous <- reactive({
-  ans <- F
+  ans <- FALSE
   currentSheet <- (projProperties[['activeSheet']])
-  if(!is.empty(currentSheet)){
+  if(!isEmpty(currentSheet)){
     currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-    if(!is.empty(currentLayer)){
+    if(!isEmpty(currentLayer)){
       currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
-      if(!is.empty(currentAes)){
+      if(!isEmpty(currentAes)){
         ans <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['canFieldBeContinuous']]()
       }      
     }    
@@ -558,11 +558,11 @@ observe({
   if(!is.null(v)){
     isolate({
       currentSheet <- (projProperties[['activeSheet']])
-      if(!is.empty(currentSheet)){
+      if(!isEmpty(currentSheet)){
         currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-        if(!is.empty(currentLayer)){
+        if(!isEmpty(currentLayer)){
           currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
-          if(!is.empty(currentAes)){
+          if(!isEmpty(currentAes)){
             sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesAggregate']] <<- v
           }        
         }      
@@ -575,12 +575,12 @@ observe({
   updateInput[['aesAggregate']]
   isolate({
     currentSheet <- (projProperties[['activeSheet']])
-    s <- F
-    if(!is.empty(currentSheet)){
+    s <- FALSE
+    if(!isEmpty(currentSheet)){
       currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-      if(!is.empty(currentLayer)){
+      if(!isEmpty(currentLayer)){
         currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
-        if(!is.empty(currentAes)){
+        if(!isEmpty(currentAes)){
           s <- isolate(sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesAggregate']])
           
         }      
@@ -597,11 +597,11 @@ observe({
   v <- input$aesAggFun
   isolate({
     currentSheet <- (projProperties[['activeSheet']])
-    if(!is.empty(currentSheet)){
+    if(!isEmpty(currentSheet)){
       currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-      if(!is.empty(currentLayer)){
+      if(!isEmpty(currentLayer)){
         currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
-        if(!is.empty(currentAes)){
+        if(!isEmpty(currentAes)){
           sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesAggFun']] <<- v         
         }        
       }      
@@ -613,18 +613,18 @@ observe({
   isolate({
     currentSheet <- (projProperties[['activeSheet']])
     s <- ''
-    if(!is.empty(currentSheet)){
+    if(!isEmpty(currentSheet)){
       currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-      if(!is.empty(currentLayer)){
+      if(!isEmpty(currentLayer)){
         currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
-        if(!is.empty(currentAes)){
+        if(!isEmpty(currentAes)){
           s <- isolate(sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesAggFun']])
           
         }      
       }    
     }
     choices <- YFunChoices
-    if(!is.empty(s) && !(s %in% choices)) choices[s]=s
+    if(!isEmpty(s) && !(s %in% choices)) choices[s]=s
     updateSelectizeInput(session, 'aesAggFun', choices=null2String(choices), selected=null2String(s))
   })  
 })
@@ -635,11 +635,11 @@ observe({
   if(!is.null(v)){
     isolate({
       currentSheet <- (projProperties[['activeSheet']])
-      if(!is.empty(currentSheet)){
+      if(!isEmpty(currentSheet)){
         currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-        if(!is.empty(currentLayer)){
+        if(!isEmpty(currentLayer)){
           currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
-          if(!is.empty(currentAes)){
+          if(!isEmpty(currentAes)){
             sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesDiscrete']] <<- (v=='discrete')
           }        
         }      
@@ -653,13 +653,13 @@ observe({
   isolate({
     currentSheet <- (projProperties[['activeSheet']])
     s <- 'discrete'
-    if(!is.empty(currentSheet)){
+    if(!isEmpty(currentSheet)){
       currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-      if(!is.empty(currentLayer)){
+      if(!isEmpty(currentLayer)){
         currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
-        if(!is.empty(currentAes)){
+        if(!isEmpty(currentAes)){
           d <- isolate(sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesDiscrete']])
-          if(!is.empty(d) && !d){
+          if(!isEmpty(d) && !d){
             s <- 'continuous'
           }
           
@@ -674,11 +674,11 @@ observe({
 observe({
   v <- input$markList
   isolate({
-    if(!is.empty(v)){
+    if(!isEmpty(v)){
       currentSheet <- (projProperties[['activeSheet']])
-      if(!is.empty(currentSheet)){
+      if(!isEmpty(currentSheet)){
         currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-        if(!is.empty(currentLayer)){
+        if(!isEmpty(currentLayer)){
           sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['geom']] <<- v
           # set default stat type & position
           sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['statType']] <<-
@@ -696,9 +696,9 @@ observe({
   updateInput[['layerGeom']]
   currentSheet <- (projProperties[['activeSheet']])
   s <- choices <- ''
-  if(!is.empty(currentSheet)){
+  if(!isEmpty(currentSheet)){
     currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-    if(!is.empty(currentLayer)){
+    if(!isEmpty(currentLayer)){
       s <- isolate(sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['geom']])
       #choices <- (sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['geomChoices']])
     }    
@@ -710,11 +710,11 @@ observe({
 observe({
   v <- input$statTypeList
   isolate({
-    if(!is.empty(v)){
+    if(!isEmpty(v)){
       currentSheet <- (projProperties[['activeSheet']])
-      if(!is.empty(currentSheet)){
+      if(!isEmpty(currentSheet)){
         currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-        if(!is.empty(currentLayer)){
+        if(!isEmpty(currentLayer)){
           
           sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['statType']] <<- v
         }      
@@ -726,9 +726,9 @@ observe({
   updateInput[['layerStatType']]
   currentSheet <- (projProperties[['activeSheet']])
   s <- choices <- ''
-  if(!is.empty(currentSheet)){
+  if(!isEmpty(currentSheet)){
     currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-    if(!is.empty(currentLayer)){
+    if(!isEmpty(currentLayer)){
       s <- isolate(sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['statType']])
       choices <- (sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['statChoices']])
     }    
@@ -741,11 +741,11 @@ observe({
 observe({
   v <- input$yFunList
   isolate({
-    if(!is.empty(v)){
+    if(!isEmpty(v)){
       currentSheet <- (projProperties[['activeSheet']])
-      if(!is.empty(currentSheet)){
+      if(!isEmpty(currentSheet)){
         currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-        if(!is.empty(currentLayer)){
+        if(!isEmpty(currentLayer)){
           sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['yFun']] <<- v
         }      
       }
@@ -756,14 +756,14 @@ observe({
   updateInput[['layerYFun']]
   currentSheet <- (projProperties[['activeSheet']])
   s <- ''
-  if(!is.empty(currentSheet)){
+  if(!isEmpty(currentSheet)){
     currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-    if(!is.empty(currentLayer)){
+    if(!isEmpty(currentLayer)){
       s <- isolate(sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['yFun']])
     }    
   }
   choices <- YFunChoices
-  if(!is.empty(s) && !(s %in% choices)) choices[s]=s
+  if(!isEmpty(s) && !(s %in% choices)) choices[s]=s
   updateSelectizeInput(session, 'yFunList', choices=null2String(choices), selected=null2String(s))
 })
 
@@ -774,9 +774,9 @@ observe({
   v <- input$layerPositionType
   isolate({
     currentSheet <- (projProperties[['activeSheet']])
-    if(!is.empty(currentSheet)){
+    if(!isEmpty(currentSheet)){
       currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-      if(!is.empty(currentLayer)){
+      if(!isEmpty(currentLayer)){
         sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['layerPositionType']] <<- v
       }      
     }
@@ -787,9 +787,9 @@ observe({
   updateInput[['layerPositionType']]
   currentSheet <- (projProperties[['activeSheet']])
   s <- ''
-  if(!is.empty(currentSheet)){
+  if(!isEmpty(currentSheet)){
     currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-    if(!is.empty(currentLayer)){
+    if(!isEmpty(currentLayer)){
       s <- isolate(sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['layerPositionType']])      
     }    
   }
@@ -801,9 +801,9 @@ observe({
   v <- empty2NULL(as.numeric(input$layerPositionHeight)) 
   isolate({
     currentSheet <- (projProperties[['activeSheet']])
-    if(!is.empty(currentSheet)){
+    if(!isEmpty(currentSheet)){
       currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-      if(!is.empty(currentLayer)){
+      if(!isEmpty(currentLayer)){
         sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['layerPositionHeight']] <<- v
       }      
     }
@@ -814,9 +814,9 @@ observe({
   updateInput[['layerPositionHeight']]
   currentSheet <- (projProperties[['activeSheet']])
   s <- ''
-  if(!is.empty(currentSheet)){
+  if(!isEmpty(currentSheet)){
     currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-    if(!is.empty(currentLayer)){
+    if(!isEmpty(currentLayer)){
       s <- isolate(sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['layerPositionHeight']])      
     }    
   }
@@ -828,9 +828,9 @@ observe({
   v <- empty2NULL(as.numeric(input$layerPositionWidth)) 
   isolate({
     currentSheet <- (projProperties[['activeSheet']])
-    if(!is.empty(currentSheet)){
+    if(!isEmpty(currentSheet)){
       currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-      if(!is.empty(currentLayer)){
+      if(!isEmpty(currentLayer)){
         sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['layerPositionWidth']] <<- v
       }      
     }
@@ -841,9 +841,9 @@ observe({
   updateInput[['layerPositionWidth']]
   currentSheet <- (projProperties[['activeSheet']])
   s <- ''
-  if(!is.empty(currentSheet)){
+  if(!isEmpty(currentSheet)){
     currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-    if(!is.empty(currentLayer)){
+    if(!isEmpty(currentLayer)){
       s <- isolate(sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['layerPositionWidth']])      
     }    
   }
@@ -855,12 +855,12 @@ observe({
 
 tabS <- tabular( (Species + 1) ~ (n=1) + Format(digits=2)*
                    (Sepal.Length + Sepal.Width)*(mean + sd), data=iris )
-canLatexPNG <- tryCatch(length(make.png(tabS)), error=function(e) F)
+canLatexPNG <- tryCatch(length(make.png(tabS)), error=function(e) FALSE)
 
 
 output$sheetOutput <- renderUI({
   currentSheet <- projProperties[['activeSheet']]
-  if(!is.empty(currentSheet)){
+  if(!isEmpty(currentSheet)){
     switch(sheetList[[currentSheet]][['dynamicProperties']][['outputType']], 
            'table'=if(canLatexPNG) imageOutput('sheetOutputTable') else {
              tags$div(
@@ -875,7 +875,7 @@ output$sheetOutput <- renderUI({
 
 output$sheetOutputTable <- renderImage(if(canLatexPNG) {
   currentSheet <- projProperties[['activeSheet']]
-  if(!is.empty(currentSheet)){
+  if(!isEmpty(currentSheet)){
     tab <- sheetList[[currentSheet]][['tableR']]()
     
     if(!is.null(tab)){
@@ -905,13 +905,13 @@ output$sheetOutputTable <- renderImage(if(canLatexPNG) {
 ## Reshaped output
 output$reshapedDat <- renderTable({ 
   currentSheet <- projProperties[['activeSheet']]
-  if(!is.empty(currentSheet)){sheetList[[currentSheet]][['dynamicProperties']][['outputTable']]}    
+  if(!isEmpty(currentSheet)){sheetList[[currentSheet]][['dynamicProperties']][['outputTable']]}    
 })
 
 output$ggplot <- renderPlot({
   if(input$autoRefresh=='refresh'){
     currentSheet <- projProperties[['activeSheet']]
-    if(!is.empty(currentSheet)){
+    if(!isEmpty(currentSheet)){
       sheetList[[currentSheet]][['plotR']]()    
     }
   } else {
@@ -930,7 +930,7 @@ observe({
   isolate({
     if(v){
       currentSheet <- (projProperties[['activeSheet']])
-      if(!is.empty(currentSheet)){
+      if(!isEmpty(currentSheet)){
         existingNames <- names(sheetList[[currentSheet]][['dynamicProperties']][['layerList']])
         layerName <- make.unique(c(existingNames, 'Overlay'), sep='_')[length(existingNames)+1]
         
@@ -968,9 +968,9 @@ observe({
   isolate({
     if(v){
       currentSheet <- (projProperties[['activeSheet']])
-      if(!is.empty(currentSheet)){
+      if(!isEmpty(currentSheet)){
         currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-        if(!is.empty(currentLayer) && currentLayer!='Plot'){
+        if(!isEmpty(currentLayer) && currentLayer!='Plot'){
           sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]] <<- NULL
           sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']] <<- 'Plot'
         }        
@@ -984,9 +984,9 @@ observe({
   isolate({
     if(v){
       currentSheet <- (projProperties[['activeSheet']])
-      if(!is.empty(currentSheet)){
+      if(!isEmpty(currentSheet)){
         currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-        if(!is.empty(currentLayer)){
+        if(!isEmpty(currentLayer)){
           temp <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]]
           sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]] <<- NULL
           sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]] <<- temp
@@ -1011,7 +1011,7 @@ observe({
   isolate({
     if(v){
       currentSheet <- (projProperties[['activeSheet']])
-      if(!is.empty(currentSheet)){
+      if(!isEmpty(currentSheet)){
         sheets <- names(sheetList)
         i <- match(currentSheet, sheets)
         sheetList[[currentSheet]] <<- NULL

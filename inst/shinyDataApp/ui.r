@@ -25,7 +25,7 @@ shinyUI(navbarPage(
            radioButtons('loadProjectAction', '',
                         choices=c('Replace existing work'='replace',
                                   'Merge with existing work'='merge'),
-                        selected='replace', inline=F),
+                        selected='replace', inline=FALSE),
 
            tags$hr(),
            fluidRow(
@@ -73,7 +73,7 @@ shinyUI(navbarPage(
                tags$hr(),
 
                selectizeInput(inputId="measures", label="Measures",
-                              choices=NULL, multiple=T,
+                              choices=NULL, multiple=TRUE,
                               options=list(
                                 placeholder = '',
                                 plugins = I("['remove_button']"))),
@@ -142,7 +142,7 @@ shinyUI(navbarPage(
                                    conditionalPanel('input.statTypeList=="summary"',
                                                     selectizeInput(inputId='yFunList', label='Summarize Y with',
                                                                    choices=YFunChoices,
-                                                                   selected='sum', multiple=F,
+                                                                   selected='sum', multiple=FALSE,
                                                                    options = list(create = TRUE)))
                             )
                           ), tags$h1('.'), tags$h1('.'), tags$h1('.')
@@ -174,7 +174,7 @@ shinyUI(navbarPage(
                         ),
                  tabPanel('Filters',
                           selectizeInput(inputId='filterField', label='Field',
-                                         choices=NULL, multiple=F)
+                                         choices=NULL, multiple=FALSE)
                   )
                )
                ),
@@ -194,12 +194,12 @@ shinyUI(navbarPage(
                         ),
                  column(4,
                         selectizeInput(inputId="columns", label="Facet Columns",
-                                       choices=NULL, multiple=T,
+                                       choices=NULL, multiple=TRUE,
                                        options=list(
                                          placeholder = '',
                                          plugins = I("['remove_button','drag_drop']"))),
                         selectizeInput(inputId="rows", label="Facet Rows",
-                                       choices=NULL, multiple=T,
+                                       choices=NULL, multiple=TRUE,
                                        options=list(
                                          placeholder = '',
                                          plugins = I("['remove_button','drag_drop']")))
