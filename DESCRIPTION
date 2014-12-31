@@ -1,8 +1,11 @@
 Package: shinyData
+Type: Package
 Title: A tool for interactive data analysis, visualization and presentation
 Version: 0.1
-Authors@R: "Yindeng Jiang <jiangyindeng@gmail.com>"
+Authors@R: "Yindeng Jiang <jiangyindeng@gmail.com> [aut, cre]"
 Description: A tool for interactive data analysis, visualization and presentation, built with r packages shiny, ggplot2 and others.
 Depends: R (>= 3.1.2)
 License: MIT
 LazyData: true
+URL: http://github.com/yindeng/shinyData
+BugReports: http://github.com/yindeng/shinyData/issues
