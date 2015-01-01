@@ -25,7 +25,7 @@ shinyServer(function(input, output, session) {
   datListNames <- reactive({
     if(length(datList)){
       x <- names(datList)
-      names(x) <- make.unique(sapply(datList, function(y) y[['dynamicProperties']][['name']]), sep='_')
+      names(x) <- sapply(datList, function(y) y[['dynamicProperties']][['name']])
       x
     } else c('')
   })
@@ -35,12 +35,21 @@ shinyServer(function(input, output, session) {
   docListNames <- reactive({
     if(length(docList)){
       x <- names(docList)
-      names(x) <- make.unique(sapply(docList, function(y) y[['name']]), sep='_')
+      names(x) <- sapply(docList, function(y) y[['name']])
       x
     } else c('')
   })
 
   sheetList <- list()
+  makeReactiveBinding('sheetList')
+
+  sheetListNames <- reactive({
+    if(length(sheetList)){
+      x <- names(sheetList)
+      names(x) <- sapply(sheetList, function(y) y[['dynamicProperties']][['name']])
+      x
+    } else c('')
+  })
   setAesReactives <- function(currentSheet, currentLayer, currentAes){
     local({
       sheetList[[currentSheet]][['dynamicProperties'
@@ -59,7 +68,11 @@ shinyServer(function(input, output, session) {
   }
   addSheet <- function(){
     newSheet <- paste("Sheet_",newGuid(),sep="")
-    sheetObj <- createNewSheetObj()
+    existingNames <- names(sheetListNames())
+    ## make sure the new name is different
+    newName <- make.unique(c(existingNames, 'Sheet'), sep='_')[length(existingNames)+1]
+
+    sheetObj <- createNewSheetObj(newName)
     sheetList[[newSheet]] <<- sheetObj
     projProperties[['activeSheet']] <- newSheet
 
@@ -70,8 +83,6 @@ shinyServer(function(input, output, session) {
     }
   }
   isolate(addSheet())
-
-  makeReactiveBinding('sheetList')
 
 
 
@@ -389,13 +400,7 @@ shinyServer(function(input, output, session) {
     }
   }, priority=10)
 
-  sheetListNames <- reactive({
-    if(length(sheetList)){
-      x <- names(sheetList)
-      names(x) <- make.unique(sapply(sheetList, function(y) y[['dynamicProperties']][['name']]), sep='_')
-      x
-    } else c('')
-  })
+
 
 
   isDatBasedonSheet <- function(datId, sheetId){
