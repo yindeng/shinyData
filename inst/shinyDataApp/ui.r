@@ -212,6 +212,32 @@ shinyUI(navbarPage(
            ),
 
 
+  tabPanel(title='Presentation',
+
+           sidebarLayout(
+             sidebarPanel(
+               fluidRow(
+                 column(3, selectInput(inputId='docList', label='', choices=NULL, selected='')),
+                 column(9, fluidRow(
+                   actionButton(inputId='addDoc', label='Add Document', styleclass="primary", size="small"),
+                   actionButton(inputId='deleteDoc', label='Delete Document', styleclass="danger", size="small")
+                 ))
+               )
+               ),
+             mainPanel(
+               tabsetPanel(id='rmdTabs',
+                 tabPanel('R_Markdown',
+                          aceEditor('rmd', mode='markdown', value='')
+                          ),
+                 tabPanel('Preview',
+                          uiOutput('rmdOutput')
+                          )
+                 )
+               )
+             )
+           ),
+
+
 
   tags$head(tags$script(src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"),
             tags$style(type='text/css', "button { margin-top: 10px; }"),

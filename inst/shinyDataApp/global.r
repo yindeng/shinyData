@@ -22,6 +22,7 @@ options(shiny.trace = FALSE)  # change to TRUE for trace
 
 require(shiny); require(reshape); require(ggplot2); require(Hmisc); require(uuid); require(plotly);
 require(tables); require(tools); require(png); require(plyr); require(shinysky); require(Cairo)
+require(knitr); require(rmarkdown); require(shinyAce)
 
 options(shiny.usecairo=TRUE)
 

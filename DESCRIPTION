@@ -9,7 +9,8 @@ Description:
   data tasks, such as slicing and dicing, aggregation, pattern recognition, visualization and more.
   Minimal knowledge of R programming is required to use shinyData.
 Suggests:
-  shiny, reshape, ggplot2, Hmisc, uuid, plotly, tables, tools, png, plyr, shinysky, Cairo
+  shiny, reshape, ggplot2, Hmisc, uuid, plotly, tables, tools, png, plyr, shinysky, Cairo,
+  knitr, rmarkdown, shinyAce
 License: MIT + file LICENSE
 LazyData: true
 URL: http://github.com/yindeng/shinyData
