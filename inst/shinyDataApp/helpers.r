@@ -13,14 +13,14 @@ make.png <- function(obj, resolution=NULL) {
       \\begin{document}\\pagestyle{empty}
       {\\Large
       ')
-  save <- booktabs(); on.exit(table_options(save))
+  save <- booktabs(); on.exit(table_options(save), add=TRUE)
   latex(obj)
-  table_options(save)
+
   cat('
       }\\end{document}
       ')
   sink()
-  wd <- setwd(tempdir()); on.exit(setwd(wd))
+  wd <- setwd(tempdir()); on.exit(setwd(wd), add=TRUE)
   texi2dvi(file=texFile, index=FALSE)
 
   cmd <- paste("dvipng -T tight -o",
