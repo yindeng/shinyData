@@ -11,7 +11,7 @@ shinyServer(function(input, output, session) {
                                 'sheetLayerAes'=0,'aesField'=0,'aesAggregate'=0,'aesAggFun'=0,'aesDiscrete'=0,
                                 'layerGeom'=0,'layerStatType'=0,'layerYFun'=0,
                                 'layerPositionType'=0, 'layerPositionWidth'=0, 'layerPositionHeight'=0,
-                                'activeDoc'=0,'docName'=0)
+                                'activeDoc'=0,'docName'=0,'docRmd'=0)
   #                                 'layerX'=0,'layerY'=0,
   #                                 'layerColor'=0,'layerFill'=0,'layerSize'=0,'layerAlpha'=0,'layerLabel'=0,
   #                                 'layerLineType'=0)
@@ -39,6 +39,19 @@ shinyServer(function(input, output, session) {
       x
     } else c('')
   })
+  addDoc <- function(){
+    newDoc <- paste("Doc_",newGuid(),sep="")
+    existingNames <- names(docListNames())
+    ## make sure the new name is different
+    newName <- make.unique(c(existingNames, 'Doc'), sep='_')[length(existingNames)+1]
+
+    docObj <- reactiveValues('name'=newName)
+    docList[[newDoc]] <<- docObj
+    projProperties[['activeDoc']] <- newDoc
+  }
+  isolate(addDoc())
+
+
 
   sheetList <- list()
   makeReactiveBinding('sheetList')
@@ -51,7 +64,6 @@ shinyServer(function(input, output, session) {
     } else c('')
   })
   setAesReactives <- function(currentSheet, currentLayer, currentAes){
-    local({
       sheetList[[currentSheet]][['dynamicProperties'
                                  ]][['layerList']][[currentLayer]][['aesList']][[currentAes]][['canFieldBeContinuous']] <<- reactive({
                                    aes <- sheetList[[currentSheet]][['dynamicProperties'
@@ -64,7 +76,6 @@ shinyServer(function(input, output, session) {
                                    }
                                    aes[['aesAggregate']] || (!isEmpty(field) && field %in% measures)
                                  })
-    })
   }
   addSheet <- function(){
     newSheet <- paste("Sheet_",newGuid(),sep="")
@@ -87,9 +98,10 @@ shinyServer(function(input, output, session) {
 
 
   ## create sheet reactives and defaults
-  observe({#browser()
-    for(currentSheet in names(sheetList)){
+  setSheetReactives <- function(){#browser()
+    for(currentSheet1 in names(sheetList)){
       isolate(local({
+        currentSheet <- currentSheet1
 
         if(isFieldUninitialized(sheetList[[currentSheet]],'layerNames')){
           sheetList[[currentSheet]][['layerNames']] <<- reactive({
@@ -398,8 +410,11 @@ shinyServer(function(input, output, session) {
 
       }))
     }
-  }, priority=10)
+  }
 
+  observe({
+    setSheetReactives()
+  }, priority=10)
 
 
 

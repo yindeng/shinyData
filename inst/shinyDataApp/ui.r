@@ -225,6 +225,8 @@ shinyUI(navbarPage(
                )
                ),
              mainPanel(
+               textInput('docName', label=''),
+               tags$hr(),
                tabsetPanel(id='rmdTabs',
                  tabPanel('R_Markdown',
                           aceEditor('rmd', mode='markdown', value='')

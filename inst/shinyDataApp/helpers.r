@@ -1,6 +1,6 @@
 ## see: http://stackoverflow.com/questions/9298765/print-latex-table-directly-to-an-image-png-or-other
 ## also maybe useful: http://tex.stackexchange.com/questions/11866/compile-a-latex-document-into-a-png-image-thats-as-short-as-possible
-make.png <- function(obj, resolution=NULL) { 
+make.png <- function(obj, resolution=NULL) {
   name <- tempfile('x')
   texFile <- paste(name,".tex",sep="")
   pngFile <- paste(name,".png",sep="")
@@ -11,7 +11,7 @@ make.png <- function(obj, resolution=NULL) {
       \\usepackage[T1]{fontenc}
       \\usepackage{booktabs}
       \\begin{document}\\pagestyle{empty}
-      {\\Large 
+      {\\Large
       ')
   save <- booktabs(); on.exit(table_options(save))
   latex(obj)
@@ -22,9 +22,9 @@ make.png <- function(obj, resolution=NULL) {
   sink()
   wd <- setwd(tempdir()); on.exit(setwd(wd))
   texi2dvi(file=texFile, index=FALSE)
-  
-  cmd <- paste("dvipng -T tight -o", 
-               shQuote(pngFile), 
+
+  cmd <- paste("dvipng -T tight -o",
+               shQuote(pngFile),
                if(!is.null(resolution)) paste("-D",resolution) else "",
                shQuote(paste(name,".dvi",sep="")))
   invisible(sys(cmd))
@@ -35,7 +35,7 @@ make.png <- function(obj, resolution=NULL) {
 
 newGuid <- function(){
   gsub("-", "_", UUIDgenerate(), fixed=TRUE)
-  
+
   #paste(sample(c(letters[1:6],0:9),30,replace=TRUE),collapse="")
 }
 
@@ -47,7 +47,7 @@ setdiff.c <<- function(x, y){
     names(x1) <- x
     names(z) <- x1[z]
     z
-  } else z  
+  } else z
 }
 isEmpty <<- function(x){
   is.null(x) || length(x)==0 || all(is.na(x)) || all(x=='')
@@ -108,37 +108,44 @@ forceMeasures <<- function(d, measures){
       if(!is.numeric(d[[n]])) d[[n]] <- as.numeric(d[[n]])
     } else {
       if(!is.factor(d[[n]])) d[[n]] <- as.factor(d[[n]])
-    }                                
+    }
   }
   d
 }
+
+## list with reference semantics
+## for later use (challenge: how to delete a field dynamically similarly to deleting a list item by setting it to NULL)
+refList <- setRefClass("refList")
+names.refList <- function(x) ls(x)[-1] # get rid of "getClass"
 
 DatClass <- setRefClass("DatClass", fields=c("staticProperties","dynamicProperties","datR","fieldNames","moltenDat","moltenNames"),
                         methods=list(setDatDependencies=function(){
                           fieldNames <<- reactive({
                             if(length(dynamicProperties[['fieldsList']])){
                               x <- names(dynamicProperties[['fieldsList']])
-                              names(x) <- make.unique(sapply(dynamicProperties[['fieldsList']], 
+                              names(x) <- make.unique(sapply(dynamicProperties[['fieldsList']],
                                                              function(y) y[['name']]), sep='_')
                               x
-                            } else c() 
+                            } else c()
                           })
                           datR <<- reactive({
                             if(is.null(dynamicProperties[['dat']])){
                               ## fetch from database etc.
-                              
+
                             } else {
-                              forceMeasures(dynamicProperties[['dat']],
+                              dat <- forceMeasures(dynamicProperties[['dat']],
                                              dynamicProperties[['measures']])
+                              label(dat, self=FALSE) <- names(fieldNames())
+                              dat
                             }
                           })
-                          
+
                           measureName <- 'MeasureNames'
                           moltenDat <<- reactive({
                             if(!isEmpty(dynamicProperties[['measures']])){
-                              melt(datR(), measure.vars=dynamicProperties[['measures']], 
+                              melt(datR(), measure.vars=dynamicProperties[['measures']],
                                    variable_name=measureName)
-                            }                            
+                            }
                           })
                           moltenNames <<- reactive({
                             x <- setdiff.c(fieldNames(), dynamicProperties[['measures']])
@@ -157,30 +164,30 @@ createNewDatClassObj <- function(dat=NULL, name='Data', nameOriginal=NULL, type=
     x[['dynamicProperties']] <- reactiveValues('fieldsList'=list())
   } else {
     activeField <- if(length(names(dat))) names(dat)[1] else ''
-    x[['dynamicProperties']] <- reactiveValues('dat'=dat, 'name'=name, 
+    x[['dynamicProperties']] <- reactiveValues('dat'=dat, 'name'=name,
                                                'fieldsList'=getDefaultFieldsList(dat),
                                                'activeField'=activeField,
                                                'measures'=getDefaultMeasures(dat))
   }
-  x$setDatDependencies() 
+  x$setDatDependencies()
   x
 }
 
 
-SheetClass <- setRefClass("SheetClass", 
+SheetClass <- setRefClass("SheetClass",
                           fields=c("dynamicProperties","datR",
                                    "fieldNames","measuresR","plotCore","plotR",
                                    "tableR","layerNames"))
 createNewLayer <- function(){
   reactiveValues('geom'='point', 'statType'='identity', 'yFun'='sum', 'layerPositionType'='identity',
                  'activeAes'='aesX',
-                 'aesList'=sapply(AesChoicesSimpleList, 
+                 'aesList'=sapply(AesChoicesSimpleList,
                                   function(x) reactiveValues('aesAggregate'=FALSE,'aesDiscrete'=TRUE,'aesMapOrSet'='map'), simplify=FALSE))
 }
 createNewSheetObj <- function(name='Sheet'){
   SheetClass$new(
     'dynamicProperties'=reactiveValues(
-      'name'=name, 
+      'name'=name,
       'datId'='', 'combineMeasures'=FALSE, 'outputType'='plot',
       'columns'='', 'colChoices'='',
       'rows'='', 'rowChoices'='',

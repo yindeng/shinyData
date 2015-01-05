@@ -12,7 +12,8 @@ output$downloadProject <- downloadHandler(
       }
       allData <- list(pp=reactiveValuesToList(projProperties),
                       dl=datList,
-                      sl=sheetList)
+                      sl=sheetList,
+                      docl=docList)
       save(allData, file=file)
       for(di in names(datList)){
         datList[[di]]$setDatDependencies()
@@ -28,6 +29,7 @@ loadProject <- function(file, replaceOrMerge='replace'){
   if(replaceOrMerge=='replace'){
     for(n in names(datList)) datList[[n]] <<- NULL
     for(n in names(sheetList)) sheetList[[n]] <<- NULL
+    for(n in names(docList)) docList[[n]] <<- NULL
   }
 
   for(n in names(allData$pp)){
@@ -105,6 +107,18 @@ loadProject <- function(file, replaceOrMerge='replace'){
       } else {
         sheetList[[si]][['dynamicProperties']][[n]] <<- x
       }
+    }
+  }
+  setSheetReactives()
+
+  for(di in names(allData$docl)){
+    if(is.null(docList[[di]])){ # new doc
+      docList[[di]] <<- reactiveValues()
+
+    }
+    for(n in names(allData$docl[[di]])){
+      x <- allData$docl[[di]][[n]]
+      docList[[di]][[n]] <<- x
     }
   }
 
