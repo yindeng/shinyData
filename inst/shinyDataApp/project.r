@@ -27,9 +27,9 @@ loadProject <- function(file, replaceOrMerge='replace'){
   load(file)
 
   if(replaceOrMerge=='replace'){
-    for(n in names(datList)) datList[[n]] <<- NULL
-    for(n in names(sheetList)) sheetList[[n]] <<- NULL
-    for(n in names(docList)) docList[[n]] <<- NULL
+    for(n in names(datList)) datList[[n]] <<- NULL; projProperties[['activeDat']] <<- NULL
+    for(n in names(sheetList)) sheetList[[n]] <<- NULL; projProperties[['activeSheet']] <<- NULL
+    for(n in names(docList)) docList[[n]] <<- NULL; projProperties[['activeDoc']] <<- NULL
   }
 
   for(n in names(allData$pp)){

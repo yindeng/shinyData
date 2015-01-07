@@ -11,7 +11,7 @@ Description:
 Depends: R (>= 3.1.2)
 Imports:
   shiny, reshape, ggplot2, Hmisc, uuid, plotly, tables, tools, png, plyr, shinysky, Cairo,
-  knitr, rmarkdown, shinyAce
+  knitr, rmarkdown, shinyAce (>= 0.2.0)
 License: MIT + file LICENSE
 LazyData: true
 URL: http://github.com/yindeng/shinyData

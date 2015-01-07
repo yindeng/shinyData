@@ -11,7 +11,7 @@ shinyServer(function(input, output, session) {
                                 'sheetLayerAes'=0,'aesField'=0,'aesAggregate'=0,'aesAggFun'=0,'aesDiscrete'=0,
                                 'layerGeom'=0,'layerStatType'=0,'layerYFun'=0,
                                 'layerPositionType'=0, 'layerPositionWidth'=0, 'layerPositionHeight'=0,
-                                'activeDoc'=0,'docName'=0,'docRmd'=0)
+                                'activeDoc'=0,'docName'=0,'docRmd'=0,'rmdOuputFormat'=0)
   #                                 'layerX'=0,'layerY'=0,
   #                                 'layerColor'=0,'layerFill'=0,'layerSize'=0,'layerAlpha'=0,'layerLabel'=0,
   #                                 'layerLineType'=0)
@@ -45,7 +45,7 @@ shinyServer(function(input, output, session) {
     ## make sure the new name is different
     newName <- make.unique(c(existingNames, 'Doc'), sep='_')[length(existingNames)+1]
 
-    docObj <- reactiveValues('name'=newName)
+    docObj <- reactiveValues('name'=newName, 'rmdOuputFormat'='pdf_document')
     docList[[newDoc]] <<- docObj
     projProperties[['activeDoc']] <- newDoc
   }
