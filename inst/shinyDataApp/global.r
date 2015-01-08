@@ -1,5 +1,4 @@
-## shinyAce
-## shinySky
+
 ## shinyFiles
 ## lubridate, dplyr
 ## R-blogger

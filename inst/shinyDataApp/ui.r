@@ -175,8 +175,31 @@ shinyUI(navbarPage(
                         ),
                  tabPanel('Filters',
                           selectizeInput(inputId='filterField', label='Field',
-                                         choices=NULL, multiple=FALSE)
-                  )
+                                         choices=NULL, multiple=FALSE),
+                          br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br()
+                  ),
+
+                 tabPanel('Customize',
+                          navlistPanel(id='customizeItem',
+                            'Labels',
+                            tabPanel('Plot Title', value='title',
+                                     textInput('plotTitle', '')
+                                     ),
+                            tabPanel('X Axis Title', value='xlab',
+                                        textInput('plotXlab', '')
+                            )
+                            ),
+                          conditionalPanel('true',
+                                           h4('Format Text'),
+                                           fluidRow(
+                                             selectInput('textFamily','Font Family', choices=FontFamilyChoices),
+                                             selectInput('textFace', 'Font Face', choices=FontFaceChoices),
+                                             jscolorInput('textColor'),
+                                             numericInput('textSize', 'Font Size (pts)', value=NULL, step=0.1)
+                                             )
+                                           ),
+                          br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br()
+                          )
                )
                ),
              mainPanel(
