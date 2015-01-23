@@ -304,7 +304,7 @@ shinyUI(navbarPage(
 
 
   tags$head(tags$script(src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"),
-            tags$style(type='text/css', "button { margin-top: 10px; }"),
+            tags$style(type='text/css', "button { margin-top: 20px; }"),
             tags$style(type='text/css', "#openSampleProj { margin-top: 0px; }")
             )
 

@@ -10,8 +10,14 @@ Description:
   Almost no knowledge of R programming is required to use shinyData.
 Depends: R (>= 3.1.2)
 Imports:
-  shiny, reshape, ggplot2, Hmisc, uuid, plotly, tables, tools, png, plyr, shinysky, Cairo,
-  knitr, rmarkdown, shinyAce (>= 0.2.0)
+  shiny (>= 0.11), reshape (>= 0.8.5),
+  ggplot2 (>= 1.0.0), Hmisc (>= 3.14-6),
+  uuid (>= 0.1-1), plotly (>= 0.5.12),
+  tables (>= 0.7.79), tools,
+  png (>= 0.1-7), plyr (>= 1.8.1),
+  shinysky (>= 0.1.2), Cairo (>= 1.5-6),
+  knitr (>= 1.9), rmarkdown (>= 0.4.2),
+  shinyAce (>= 0.2.0)
 License: MIT + file LICENSE
 LazyData: true
 URL: https://github.com/yindeng/shinyData
