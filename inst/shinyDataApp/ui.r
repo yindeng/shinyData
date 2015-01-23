@@ -31,7 +31,10 @@ shinyUI(navbarPage(
            radioButtons('loadProjectAction', '',
                         choices=c('Replace existing work'='replace',
                                   'Merge with existing work'='merge'),
-                        selected='replace', inline=FALSE)
+                        selected='replace', inline=FALSE),
+
+           tags$hr(),
+           includeMarkdown('md/about.md')
   ),
 
 

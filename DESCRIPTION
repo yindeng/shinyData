@@ -14,5 +14,5 @@ Imports:
   knitr, rmarkdown, shinyAce (>= 0.2.0)
 License: MIT + file LICENSE
 LazyData: true
-URL: http://github.com/yindeng/shinyData
-BugReports: http://github.com/yindeng/shinyData/issues
+URL: https://github.com/yindeng/shinyData
+BugReports: https://github.com/yindeng/shinyData/issues
