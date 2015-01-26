@@ -1,16 +1,8 @@
 
-## shinyFiles
-## lubridate, dplyr
-## R-blogger
-## http://www.r-bloggers.com/read-excel-files-from-r/
-## Plotly or animit
-
 ## conditional calculated field: mutate and ddply; see documentation for ddply
 ## groups: use selectInput with multiple=TRUE and selectize = FALSE
-## DONE: add sample data mtcars
 ## http://stackoverflow.com/questions/3418128/how-to-convert-a-factor-to-an-integer-numeric-without-a-loss-of-information
 
-## optimize what's to save for project
 ## GitHub Hosting example: https://gist.github.com/mattbrehmer/5645155
 ## Alternative to ggplot2: https://github.com/ramnathv/rCharts
 
