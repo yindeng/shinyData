@@ -11,7 +11,7 @@ options(shiny.error=NULL) # NULL
 options(shiny.trace = FALSE)  # change to TRUE for trace
 #options(shiny.reactlog=TRUE)
 
-require(shiny); require(reshape); require(ggplot2); require(Hmisc); require(uuid); require(plotly);
+require(shiny); require(reshape); require(ggplot2); require(Hmisc); require(uuid); #require(plotly);
 require(tables); require(tools); require(png); require(plyr); require(shinysky); require(Cairo)
 require(knitr); require(rmarkdown); require(shinyAce)
 

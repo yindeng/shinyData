@@ -12,7 +12,7 @@ Depends: R (>= 3.1.2)
 Imports:
   shiny (>= 0.11), reshape (>= 0.8.5),
   ggplot2 (>= 1.0.0), Hmisc (>= 3.14-6),
-  uuid (>= 0.1-1), plotly (>= 0.5.12),
+  uuid (>= 0.1-1), 
   tables (>= 0.7.79), tools,
   png (>= 0.1-7), plyr (>= 1.8.1),
   shinysky (>= 0.1.2), Cairo (>= 1.5-6),
