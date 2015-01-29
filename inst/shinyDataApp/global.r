@@ -7,7 +7,11 @@
 ## Alternative to ggplot2: https://github.com/ramnathv/rCharts
 
 #options(error = browser)
-options(shiny.error=NULL) # NULL
+# NULL, browser, etc.
+options(shiny.error=function() {
+  ## skip validation errors
+  if(!inherits(eval.parent(expression(e)), "validation")) browser()
+})
 options(shiny.trace = FALSE)  # change to TRUE for trace
 #options(shiny.reactlog=TRUE)
 
@@ -17,9 +21,6 @@ require(knitr); require(rmarkdown); require(shinyAce)
 
 options(shiny.usecairo=TRUE)
 
-
-
-InitialTextValue <- 'Xabcde-f9'
 
 MoltenMeasuresName <- 'value'
 YFunChoices <- c('Sum'='sum','Mean'='mean','Median'='median','Min'='min','Max'='max',
