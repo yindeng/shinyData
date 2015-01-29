@@ -136,7 +136,7 @@ DatClass <- setRefClass("DatClass", fields=c("staticProperties","dynamicProperti
                               dat <- forceMeasures(dynamicProperties[['dat']],
                                              dynamicProperties[['measures']])
                               label(dat, self=FALSE) <- names(fieldNames())
-                              dat
+                              if(is.data.table(dat)) dat else as.data.table(dat)
                             }
                           })
 
@@ -144,7 +144,7 @@ DatClass <- setRefClass("DatClass", fields=c("staticProperties","dynamicProperti
                           moltenDat <<- reactive({
                             if(!isEmpty(dynamicProperties[['measures']])){
                               melt(datR(), measure.vars=dynamicProperties[['measures']],
-                                   variable_name=measureName)
+                                   variable.name=measureName)
                             }
                           })
                           moltenNames <<- reactive({
@@ -179,8 +179,11 @@ SheetClass <- setRefClass("SheetClass",
                                    "fieldNames","measuresR","plotCore","plotR",
                                    "tableR","layerNames"))
 createNewLayer <- function(){
-  reactiveValues('geom'='point', 'statType'='identity', 'yFun'='sum', 'layerPositionType'='identity',
+  geom <- 'point'
+  stat <- 'identity'
+  reactiveValues('geom'=geom, 'statType'=stat, 'yFun'='sum', 'layerPositionType'='identity',
                  'activeAes'='aesX',
+                 'aesChoices'=getAesChoices(geom, stat),
                  'aesList'=sapply(AesChoicesSimpleList,
                                   function(x) reactiveValues('aesAggregate'=FALSE,'aesDiscrete'=TRUE,'aesMapOrSet'='map'), simplify=FALSE))
 }

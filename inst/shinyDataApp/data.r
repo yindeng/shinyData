@@ -128,10 +128,7 @@ observe({
   inFile <- input[['file']]
   isolate({
     if (!is.null(inFile)){
-      dat  <- (read.csv(inFile$datapath,
-                        header=input[['header']],
-                        sep=input[['sep']],
-                        quote=input[['quote']]))
+      dat  <- fread(inFile$datapath, header="auto", sep="auto")
       fileN <- paste('file_',newGuid(),sep='')
       existingNames <- names(datListNames())
       ## make sure the new name is different
@@ -155,7 +152,7 @@ output$datPreview <- renderDataTable({
   currentDat <- projProperties[['activeDat']]
   if(!isEmpty(currentDat)){
     datPrev <- datList[[currentDat]][['datR']]()
-    names(datPrev) <- names(datList[[currentDat]][['fieldNames']]())
+    setnames(datPrev, names(datList[[currentDat]][['fieldNames']]()))
     datPrev
   }
 })

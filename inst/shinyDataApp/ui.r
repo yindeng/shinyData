@@ -253,11 +253,10 @@ shinyUI(navbarPage(
 
                tabsetPanel(
                  tabPanel('Instructions',
-                          helpText(list('All',
-                                        tags$a('R Markdown', href='http://rmarkdown.rstudio.com/', target='_blank'),
-                                        'formats are supported.',
-                                        'In addition, data and sheet names, when quoted by backticks in an R code chunk,',
-                                        'evaluate to the corresponding data frame and the sheet output, respectively.')),
+
+                          br(),
+                          includeMarkdown('md/rmdInstructions.md'),
+
                           checkboxInput('withRChunk', label='Insert with R chunk enclosure', value=TRUE),
                           fluidRow(
                             column(6, selectInput(inputId='datNameToInsert', label='', choices=NULL, selected='')),

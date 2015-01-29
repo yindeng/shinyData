@@ -27,3 +27,24 @@ This will open your default browser and run shinyData locally on your computer.
 
 To quickly get a flavor of what shinyData can do, simply open one of the sample projects in the dropdown box on the "Project" page.
 
+# Feature Overview
+
+## Data extraction and basic manipulation
+Currently you can only load data from a text file. However, shinyData can auto-detect the presence of header row and common text delimiters (such as comma or tab), as well as skipping banners at the beginning of the file if any, thus requiring minimal input from the user.
+
+After data is loaded, user can preview the data, customize the data source name and field names, and specify which fields should be considered measures. The implication of setting a field as measure is that it will allow aggregation on the field.
+
+## Data aggregation
+The data aggregation in each plot layer is independent of each other, so it is possible to have different levels of granularity in the same plot. When you map a visual element (like X, Y, Color, etc) to a field in the data, you have the option to aggregate the field with the function selected from a list (or type in any R function that takes a vector and returns a single value). The aggregation is done conditional on all the fields that are mapped to in the current layer but not being aggregated, as well as any fields specified in facet columns or rows.
+
+When there is any aggregation done in the base "Plot" layer, the aggregated data table is automally added to the list of data sources. This is very useful when a secondary aggregation is desired.
+
+## Visualization
+In general, visual elements can either be mapped to a field or set to a fixed value.
+
+## Presentation
+Thanks to the simplicity and flexibity of [R Markdown](http://rmarkdown.rstudio.com/), user can easily combine the plots to create beautiful reports and presentations. And if you are a R programmer, you can add arbitrary R scripts to include analysis results that are not supported by the shinyData UI. 
+
+## Project management
+By saving the project to a file, user can pick up where he left off. User can also merge two projects together by selecting "Merge with existing work" when loading a project file.
+

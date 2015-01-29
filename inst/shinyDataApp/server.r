@@ -228,10 +228,6 @@ shinyServer(function(input, output, session) {
                   aes.current[['aesColor']] <- borderColor
                 }
 
-                i.map <- sapply(aes.current, function(x) are.vectors.different(x[['aesMapOrSet']],'set'))
-                aes.map <- aes.current[i.map]
-                aes.set <- aes.current[!i.map]
-
                 ## aesthetics validation
                 validate(
                   need(!is.null(aes.current[['aesX']]), label='X')
@@ -269,6 +265,10 @@ shinyServer(function(input, output, session) {
                   )
                 }
 
+                i.map <- sapply(aes.current, function(x) are.vectors.different(x[['aesMapOrSet']],'set'))
+                aes.map <- aes.current[i.map]
+                aes.set <- aes.current[!i.map]
+
                 ## aggregate data for layer
                 datLayer <- datSheet
                 aes.toAgg <- aes.map[sapply(aes.map, function(x) x[['aesAggregate']])]
@@ -282,14 +282,14 @@ shinyServer(function(input, output, session) {
                   overlaps <- intersect(agg.fields, c(rr,cc))
                   validate(need(isEmpty(overlaps), 'Can not aggregate fields used in faceting.'))
 
-                  # build the call for ddply
-                  .args <- lapply(aes.toAgg, function(x) parse(text=paste(x[['aesAggFun']], '(', x[['aesFieldOriginal']], ')', sep=''))[[1]])
-                  names(.args) <- sapply(aes.toAgg, function(x) x[['aesField']])
-                  .args[['.data']] <- datSheet
-                  .args[['.variables']] <- unique(c(rr,cc,sapply(aes.map[sapply(aes.map, function(x) !(x[['aesAggregate']]))],
-                                                                 function(x) x[['aesField']])))
-                  .args[['.fun']] <- summarize
-                  datLayer <- do.call('ddply', .args)
+                  # build the j-expression from string; there may be a better way
+                  agg.str <- sapply(aes.toAgg, function(x) paste(x[['aesAggFun']], '(', x[['aesFieldOriginal']], ')', sep=''))
+                  agg.str <- paste(sapply(aes.toAgg, function(x) x[['aesField']]), agg.str, sep='=', collapse=', ')
+                  agg.str <- paste0('list(', agg.str, ')')
+                  agg.exp <- parse(text=agg.str)[[1]]
+                  groupBy <- unique(c(rr,cc,sapply(aes.map[sapply(aes.map, function(x) !(x[['aesAggregate']]))],
+                                                   function(x) x[['aesField']])))
+                  datLayer <- eval(bquote(datSheet[, .(agg.exp), by=.(groupBy)]))
 
                   if(currentLayer=='Plot'){
                     ## add to dataList
