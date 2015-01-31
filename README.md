@@ -32,7 +32,7 @@ To quickly get a flavor of what shinyData can do, simply open one of the sample 
 ## Data extraction and basic manipulation
 Currently you can only load data from a text file. However, shinyData can auto-detect the presence of header row and common text delimiters (such as comma or tab), as well as skipping banners at the beginning of the file if any, thus requiring minimal input from the user.
 
-After data is loaded, user can preview the data, customize the data source name and field names, and specify which fields should be considered measures. The implication of setting a field as measure is that it will allow aggregation on the field.
+After data is loaded, user can preview the data, customize the data source name and field names, and specify which fields should be considered measures. The implication of setting a field as measure is that it will allow for numerical aggregation on the field.
 
 ## Data aggregation
 The data aggregation in each plot layer is independent of each other, so it is possible to have different levels of granularity in the same plot. When you map a visual element (like X, Y, Color, etc) to a field in the data, you have the option to aggregate the field with the function selected from a list (or type in any R function that takes a vector and returns a single value). The aggregation is done conditional on all the fields that are mapped to in the current layer but not being aggregated, as well as any fields specified in facet columns or rows.

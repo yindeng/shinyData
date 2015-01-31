@@ -8,10 +8,11 @@
 
 #options(error = browser)
 # NULL, browser, etc.
-options(shiny.error=function() {
-  ## skip validation errors
-  if(!inherits(eval.parent(expression(e)), "validation")) browser()
-})
+options(shiny.error=NULL)
+# options(shiny.error=function() {
+#   ## skip validation errors
+#   if(!inherits(eval.parent(expression(e)), "validation")) browser()
+# })
 options(shiny.trace = FALSE)  # change to TRUE for trace
 #options(shiny.reactlog=TRUE)
 
@@ -23,8 +24,11 @@ options(shiny.usecairo=TRUE)
 
 
 MoltenMeasuresName <- 'value'
+lengthUnique <<- function(x) { length(unique(x)) }
 YFunChoices <- c('Sum'='sum','Mean'='mean','Median'='median','Min'='min','Max'='max',
-                 'Standard Deviation'='sd','Variance'='var')
+                 'Standard Deviation'='sd','Variance'='var','Count'='length', 'Count (Distinct)'='lengthUnique')
+AggFunChoicesDimension <- c('Min'='min','Max'='max',
+                            'Count'='length', 'Count (Distinct)'='lengthUnique')
 InternalY <- '..y..'
 
 

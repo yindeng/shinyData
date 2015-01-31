@@ -512,8 +512,10 @@ observe({
                 v <- null2String(sheetList[[currentSheet]][['dynamicProperties']][['layerList']][['Plot']][['aesList']][[currentAes]][['aesField']])
               }
               is.measure <- v %in% sheetList[[currentSheet]][['measuresR']]()
+              sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesIsFieldMeasure']] <<-
+                is.measure  ## just for capturing this information to customize choices for agg fun
               sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesAggregate']] <<- is.measure
-              sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesAggFun']] <<- 'sum'
+              sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesAggFun']] <<- if(is.measure) 'sum' else 'length'
               sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesDiscrete']] <<- !is.measure
               sapply(c('aesAggregate','aesAggFun','aesDiscrete'), triggerUpdateInput)
             }
@@ -623,17 +625,19 @@ observe({
   isolate({
     currentSheet <- (projProperties[['activeSheet']])
     s <- ''
+    choices <- YFunChoices
     if(!isEmpty(currentSheet)){
       currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
       if(!isEmpty(currentLayer)){
         currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
         if(!isEmpty(currentAes)){
-          s <- isolate(sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesAggFun']])
-
+          s <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesAggFun']]
+          is.measure <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesIsFieldMeasure']]
+          if(!is.null(is.measure) && !is.measure) choices <- AggFunChoicesDimension
         }
       }
     }
-    choices <- YFunChoices
+
     if(!isEmpty(s) && !(s %in% choices)) choices[s]=s
     updateSelectizeInput(session, 'aesAggFun', choices=null2String(choices), selected=null2String(s))
   })
@@ -650,7 +654,15 @@ observe({
         if(!isEmpty(currentLayer)){
           currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
           if(!isEmpty(currentAes)){
-            sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesDiscrete']] <<- (v=='discrete')
+            isDiscrete <- (v=='discrete')
+            if(currentAes %in% c('aesX', 'aesY')){
+              ## can't mix discrete with continuous scales on x or y, so need to keep all layers the same
+              for(layer in names(sheetList[[currentSheet]][['dynamicProperties']][['layerList']])){
+                sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[layer]][['aesList']][[currentAes]][['aesDiscrete']] <<- isDiscrete
+              }
+            } else {
+              sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesDiscrete']] <<- isDiscrete
+            }
           }
         }
       }
