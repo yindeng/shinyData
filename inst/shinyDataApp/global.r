@@ -15,6 +15,8 @@ options(shiny.error=NULL)
 # })
 options(shiny.trace = FALSE)  # change to TRUE for trace
 #options(shiny.reactlog=TRUE)
+options(shiny.maxRequestSize = 100*1024^2)  # Set the upload limit to 100MB
+## see https://groups.google.com/forum/#!topic/shiny-discuss/2wgIG3dOEZI
 
 require(shiny); require(reshape); require(ggplot2); require(Hmisc); require(uuid); #require(plotly);
 require(tables); require(tools); require(png); require(data.table); require(shinysky); require(Cairo)
