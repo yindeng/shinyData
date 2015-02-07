@@ -18,7 +18,7 @@ options(shiny.trace = FALSE)  # change to TRUE for trace
 options(shiny.maxRequestSize = 100*1024^2)  # Set the upload limit to 100MB
 ## see https://groups.google.com/forum/#!topic/shiny-discuss/2wgIG3dOEZI
 
-require(shiny); require(reshape); require(ggplot2); require(Hmisc); require(uuid); #require(plotly);
+require(extrafont); require(shiny); require(reshape); require(ggplot2); require(Hmisc); require(uuid); #require(plotly);
 require(tables); require(tools); require(png); require(data.table); require(shinysky); require(Cairo)
 require(knitr); require(rmarkdown); require(shinyAce)
 
@@ -140,29 +140,38 @@ getAesChoices <- function(geom, stat='identity'){
 
 AesChoicesSimpleList <- unique(unlist(lapply(GeomChoices, getAesChoices), use.names=FALSE))
 
-fonttable <- read.table(header=TRUE, sep=",", stringsAsFactors=FALSE,
-                        text='
-Short,Canonical
-mono,Courier
-sans,Helvetica
-serif,Times
-,AvantGarde
-,Bookman
-,Helvetica-Narrow
-,NewCenturySchoolbook
-,Palatino
-,URWGothic
-,URWBookman
-,NimbusMon
-URWHelvetica,NimbusSan
-,NimbusSanCond
-,CenturySch
-,URWPalladio
-URWTimes,NimbusRom
-')
-FontFamilyChoices <- as.vector(t(as.matrix(fonttable)))
-FontFamilyChoices <- FontFamilyChoices[FontFamilyChoices!='']
+# fonttable <- read.table(header=TRUE, sep=",", stringsAsFactors=FALSE,
+#                         text='
+# Short,Canonical
+# mono,Courier
+# sans,Helvetica
+# serif,Times
+# ,AvantGarde
+# ,Bookman
+# ,Helvetica-Narrow
+# ,NewCenturySchoolbook
+# ,Palatino
+# ,URWGothic
+# ,URWBookman
+# ,NimbusMon
+# URWHelvetica,NimbusSan
+# ,NimbusSanCond
+# ,CenturySch
+# ,URWPalladio
+# URWTimes,NimbusRom
+# ')
+# FontFamilyChoices <- as.vector(t(as.matrix(fonttable)))
+# FontFamilyChoices <- FontFamilyChoices[FontFamilyChoices!='']
 
-FontFaceChoices <- c("plain","bold","italic","bold.italic")
+
+if(system.file("fontmap/fonttable.csv", package = "extrafontdb")=="")
+ font_import(prompt=FALSE) # this only needs run once but takes a long time
+# loadfonts()
+FontFamilyChoices <- fonts()
+
+# FontFamilyChoices <- c("AvantGarde", "Bookman", "Courier", "Helvetica",
+#   "Helvetica-Narrow", "NewCenturySchoolbook", "Palatino", "Times")
+
+FontFaceChoices <- c("Plain"="plain","Bold"="bold","Italic"="italic","Bold & Italic"="bold.italic")
 
 
