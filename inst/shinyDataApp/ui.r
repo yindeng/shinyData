@@ -168,13 +168,16 @@ shinyUI(navbarPage(
                   ),
 
                  tabPanel('Customize',
-                          navlistPanel(id='customizeItem',
+                          navlistPanel(id='customizeItem', well=FALSE,
                             'Labels',
-                            tabPanel('Plot Title', value='title',
+                            tabPanel('Plot Title', value='titleFormat',
                                      textInput('plotTitle', '')
                                      ),
-                            tabPanel('X Axis Title', value='xlab',
+                            tabPanel('X Axis Title', value='xlabFormat',
                                         textInput('plotXlab', '')
+                            ),
+                            tabPanel('Y Axis Title', value='ylabFormat',
+                                     textInput('plotYlab', '')
                             )
                             ),
                           conditionalPanel('true',
@@ -182,8 +185,13 @@ shinyUI(navbarPage(
                                            fluidRow(
                                              selectInput('textFamily','Font Family', choices=FontFamilyChoices),
                                              selectInput('textFace', 'Font Face', choices=FontFaceChoices),
+                                             strong('Font Color'),
                                              jscolorInput('textColor'),
-                                             numericInput('textSize', 'Font Size (pts)', value=NULL, step=0.1)
+                                             numericInput('textSize', 'Font Size (pts)', value=NULL, step=0.1),
+                                             numericInput('textHjust', 'Horizontal Adjustment', value=NULL, step=0.1),
+                                             numericInput('textVjust', 'Vertical Adjustment', value=NULL, step=0.1),
+                                             numericInput('textAngle', 'Angle (in [0,360])', value=NULL, step=1),
+                                             numericInput('textLineheight', 'Line Height', value=NULL, step=0.1)
                                              )
                                            ),
                           br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br()

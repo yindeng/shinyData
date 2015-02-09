@@ -3,6 +3,7 @@ source('helpers.r', local=TRUE)
 
 shinyServer(function(input, output, session) {
 
+  sessionEnv <- environment()
   projProperties <- reactiveValues('activeDat'='')
   sessionProperties <- reactiveValues()
   updateInput <- reactiveValues('activeDat'=0,'datName'=0,'activeField'=0,'fieldName'=0,'measures'=0,
@@ -11,7 +12,11 @@ shinyServer(function(input, output, session) {
                                 'sheetLayerAes'=0,'aesField'=0,'aesAggregate'=0,'aesAggFun'=0,'aesDiscrete'=0,
                                 'layerGeom'=0,'layerStatType'=0,'layerYFun'=0,
                                 'layerPositionType'=0, 'layerPositionWidth'=0, 'layerPositionHeight'=0,
-                                'activeDoc'=0,'docName'=0,'docRmd'=0,'rmdOuputFormat'=0)
+                                'activeDoc'=0,'docName'=0,'docRmd'=0,'rmdOuputFormat'=0,
+                                'customizeItem'=0, 'plotXlab'=0, 'plotYlab'=0, 'plotTitle'=0,
+                                'textFamily'=0, 'textFace'=0, 'textColor'=0,'textSize'=0, 'textHjust'=0, 'textVjust'=0,
+                                'textAngle'=0, 'textLineheight'=0)
+
   #                                 'layerX'=0,'layerY'=0,
   #                                 'layerColor'=0,'layerFill'=0,'layerSize'=0,'layerAlpha'=0,'layerLabel'=0,
   #                                 'layerLineType'=0)
@@ -359,16 +364,7 @@ shinyServer(function(input, output, session) {
                 if(is.null(gg)) gg <- ggplot()
                 gg <- gg + do.call(paste('geom',geom,sep='_'),
                                    c(aes.set.args, list(mapping=aess, data=datLayer, stat=stat, fun.y=fun.y, position=position)))
-                #                 if(currentLayer=='Plot'){
-                #                   gg <- ggplot(data=datLayer, aess) +
-                #                     do.call(paste('geom',geom,sep='_'),
-                #                             c(aes.set.args, list(stat=stat, fun.y=fun.y, position=position)))
-                #                 } else {
-                #                   if(!is.null(gg)){
-                #                     gg <- gg + do.call(paste('geom',geom,sep='_'),
-                #                                        c(aes.set.args, list(mapping=aess, data=datLayer, stat=stat, fun.y=fun.y, position=position)))
-                #                   }
-                #                 }
+
               }
             }
             if(!is.null(gg)){
@@ -391,18 +387,27 @@ shinyServer(function(input, output, session) {
 
             gg <- sl[[currentSheet]][['plotCore']]()
             if(!is.null(gg)){
-              if(!isEmpty(aes.base[['aesX']][['aesField']])){
-                i.match <- match(aes.base[['aesX']][['aesField']], fieldNames)
-                if(!is.na(i.match)){
-                  gg <- gg + xlab(names(fieldNames)[i.match])
+              themeElements <- c('plot.title'='titleFormat', 'axis.title.x'='xlabFormat', 'axis.title.y'='ylabFormat')
+              themeElementCalls <- lapply(themeElements, function(customizeItem){
+                cus <- sheetList[[currentSheet]][['dynamicProperties']][[customizeItem]]
+                if(!isEmpty(cus)){
+                  cus <- cus[!sapply(cus, isEmpty)]
+                  names(cus) <- tolower(substring(names(cus), 5)) # get rid of the 'text' prefix
+
+                  eleText <- do.call('element_text', cus)
                 }
+              })
+              names(themeElementCalls) <- names(themeElements)
+              themeElementCalls <- themeElementCalls[!sapply(themeElementCalls, is.null)]
+
+
+              gg <- gg + xlab(sheetList[[currentSheet]][['dynamicProperties']][['plotXlab']]) +
+                ylab(sheetList[[currentSheet]][['dynamicProperties']][['plotYlab']]) +
+                ggtitle(sheetList[[currentSheet]][['dynamicProperties']][['plotTitle']])
+              if(length(themeElementCalls)){
+                gg <- gg + do.call('theme', themeElementCalls)
               }
-              if(!isEmpty(aes.base[['aesY']][['aesField']])){
-                i.match <- match(aes.base[['aesY']][['aesField']], fieldNames)
-                if(!is.na(i.match)){
-                  gg <- gg + ylab(names(fieldNames)[i.match])
-                }
-              }
+
             }
             gg
           })
@@ -434,6 +439,7 @@ shinyServer(function(input, output, session) {
 
   source('data.r', local=TRUE)
   source('sheets.r', local=TRUE)
+  source('sheetsCustomize.r', local=TRUE)
   source('project.r', local=TRUE)
   source('docs.r', local=TRUE)
 

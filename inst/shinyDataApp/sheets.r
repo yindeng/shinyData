@@ -518,6 +518,27 @@ observe({
               sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesAggFun']] <<- if(is.measure) 'sum' else 'length'
               sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesDiscrete']] <<- !is.measure
               sapply(c('aesAggregate','aesAggFun','aesDiscrete'), triggerUpdateInput)
+
+              ## set default xlab, ylab
+              if(!isEmpty(v)){
+                fieldNames <- sheetList[[currentSheet]][['fieldNames']]()
+                i.match <- match(v, fieldNames)
+                if(!is.na(i.match)){
+                  fieldName <- names(fieldNames)[i.match]
+                  switch(currentAes,
+                         'aesX'={
+                           sheetList[[currentSheet]][['dynamicProperties']][['plotXlab']] <<- fieldName
+                           triggerUpdateInput('plotXlab')
+                         },
+                         'aesY'={
+                           sheetList[[currentSheet]][['dynamicProperties']][['plotYlab']] <<- fieldName
+                           triggerUpdateInput('plotYlab')
+                         }
+                         )
+
+                }
+              }
+
             }
           }
         }

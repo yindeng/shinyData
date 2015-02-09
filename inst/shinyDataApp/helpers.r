@@ -49,8 +49,16 @@ setdiff.c <<- function(x, y){
     z
   } else z
 }
+
+#' Check if an object is empty
+#' @examples
+#' isEmpty(NULL)
+#' isEmpty(c())
+#' isEmpty(list(x=NA))
+#' isEmpty(list(x='', y=''))
 isEmpty <<- function(x){
-  is.null(x) || length(x)==0 || all(is.na(x)) || all(x=='')
+  if(is.list(x)) x <- unlist(x)
+  is.null(x) || length(x)==0 || all(is.na(x) | x=='')
 }
 
 ifnull <- function(x, d){
