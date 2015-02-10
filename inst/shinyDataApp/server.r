@@ -443,6 +443,17 @@ shinyServer(function(input, output, session) {
   source('project.r', local=TRUE)
   source('docs.r', local=TRUE)
 
+  observe({
+    v <- input$importFonts
+    isolate({
+      if(!is.null(v) && v==1){  # so it's executed the first time the button is clicked
+        if(!require(extrafont)) install.packages('extrafont')
+        extrafont::font_import(prompt=FALSE) # this only needs run once but takes a long time
+        # todo: alert user
+      }
+    })
+  })
+
 })
 
 
