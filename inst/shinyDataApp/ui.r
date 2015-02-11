@@ -170,13 +170,13 @@ shinyUI(navbarPage(
                  tabPanel('Customize',
                           navlistPanel(id='customizeItem', well=FALSE,
                             'Labels',
-                            tabPanel('Plot Title', value='titleFormat',
+                            tabPanel('Plot Title', value='plot.title',
                                      textInput('plotTitle', '')
                                      ),
-                            tabPanel('X Axis Title', value='xlabFormat',
+                            tabPanel('X Axis Title', value='axis.title.x',
                                         textInput('plotXlab', '')
                             ),
-                            tabPanel('Y Axis Title', value='ylabFormat',
+                            tabPanel('Y Axis Title', value='axis.title.y',
                                      textInput('plotYlab', '')
                             )
                             ),

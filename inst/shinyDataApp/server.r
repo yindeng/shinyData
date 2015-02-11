@@ -387,17 +387,15 @@ shinyServer(function(input, output, session) {
 
             gg <- sl[[currentSheet]][['plotCore']]()
             if(!is.null(gg)){
-              themeElements <- c('plot.title'='titleFormat', 'axis.title.x'='xlabFormat', 'axis.title.y'='ylabFormat')
-              themeElementCalls <- lapply(themeElements, function(customizeItem){
-                cus <- sheetList[[currentSheet]][['dynamicProperties']][[customizeItem]]
+              themeElementCalls <- lapply(sheetList[[currentSheet]][['dynamicProperties']][['formatting']],
+                                          function(cus){
                 if(!isEmpty(cus)){
-                  cus <- cus[!sapply(cus, isEmpty)]
-                  names(cus) <- tolower(substring(names(cus), 5)) # get rid of the 'text' prefix
-
-                  eleText <- do.call('element_text', cus)
+                  cus1 <- cus[!sapply(cus, isEmpty)]
+                  names(cus1) <- tolower(substring(names(cus1), 5)) # get rid of the 'text' prefix
+                  do.call(attr(cus, 'type'), cus1)
                 }
               })
-              names(themeElementCalls) <- names(themeElements)
+              names(themeElementCalls) <- names(sheetList[[currentSheet]][['dynamicProperties']][['formatting']])
               themeElementCalls <- themeElementCalls[!sapply(themeElementCalls, is.null)]
 
 

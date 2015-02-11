@@ -12,6 +12,16 @@ lapply(list(list(inputId='customizeItem', inputType='tabsetPanel'),
                     if(!isEmpty(currentSheet)){
                       if(are.vectors.different(v, sheetList[[currentSheet]][['dynamicProperties']][[x$inputId]])){
                         sheetList[[currentSheet]][['dynamicProperties']][[x$inputId]] <<- v
+
+                        if(x$inputId=='customizeItem'){
+                          if(is.null(sheetList[[currentSheet]][['dynamicProperties']][['formatting']])){
+                            sheetList[[currentSheet]][['dynamicProperties']][['formatting']] <<- list()
+                          }
+                          if(is.null(sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[v]])){
+                            sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[v]] <<-
+                              structure(list(), 'type'='element_text')
+                          }
+                        }
                       }
                     }
                   })
@@ -53,12 +63,9 @@ lapply(list(list(inputId='textFamily', inputType='select'),
                     if(!isEmpty(currentSheet)) {
                       customizeItem <- sheetList[[currentSheet]][['dynamicProperties']][['customizeItem']]
                       if(!isEmpty(customizeItem)){
-                        if(is.null(sheetList[[currentSheet]][['dynamicProperties']][[customizeItem]])){
-                          sheetList[[currentSheet]][['dynamicProperties']][[customizeItem]] <<- list()
-                        }
                         if(x$inputId=='textColor' && !isEmpty(v)) v <- paste0("#", v)
-                        if(are.vectors.different(v, sheetList[[currentSheet]][['dynamicProperties']][[customizeItem]][[x$inputId]])){
-                          sheetList[[currentSheet]][['dynamicProperties']][[customizeItem]][[x$inputId]] <<- v
+                        if(are.vectors.different(v, sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[customizeItem]][[x$inputId]])){
+                          sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[customizeItem]][[x$inputId]] <<- v
                         }
                       }
                     }
@@ -73,9 +80,11 @@ lapply(list(list(inputId='textFamily', inputType='select'),
                   s <- ''
                   if(!isEmpty(currentSheet)){
                     customizeItem <- (sheetList[[currentSheet]][['dynamicProperties']][['customizeItem']])
-                    if(!isEmpty(customizeItem) && !is.null(sheetList[[currentSheet]][['dynamicProperties']][[customizeItem]])){
-                      s <- isolate(sheetList[[currentSheet]][['dynamicProperties']][[customizeItem]][[x$inputId]])
-                    }
+                    isolate({
+                      if(!isEmpty(customizeItem) && !is.null(sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[customizeItem]])){
+                        s <- sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[customizeItem]][[x$inputId]]
+                      }
+                    })
                   }
 
                   switch(x$inputType,
