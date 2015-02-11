@@ -387,7 +387,9 @@ shinyServer(function(input, output, session) {
 
             gg <- sl[[currentSheet]][['plotCore']]()
             if(!is.null(gg)){
-              themeElementCalls <- lapply(sheetList[[currentSheet]][['dynamicProperties']][['formatting']],
+              themeElementCalls <-
+                sapply(sheetList[[currentSheet]][['dynamicProperties']][['formatting']],
+                       simplify = FALSE, USE.NAMES = TRUE,
                                           function(cus){
                 if(!isEmpty(cus)){
                   cus1 <- cus[!sapply(cus, isEmpty)]
@@ -395,7 +397,6 @@ shinyServer(function(input, output, session) {
                   do.call(attr(cus, 'type'), cus1)
                 }
               })
-              names(themeElementCalls) <- names(sheetList[[currentSheet]][['dynamicProperties']][['formatting']])
               themeElementCalls <- themeElementCalls[!sapply(themeElementCalls, is.null)]
 
 

@@ -168,7 +168,8 @@ shinyUI(navbarPage(
                   ),
 
                  tabPanel('Customize',
-                          navlistPanel(id='customizeItem', well=FALSE,
+                          shinyTree('customizeItem'),
+                          navlistPanel(id='customizeItem1', well=FALSE,
                             'Labels',
                             tabPanel('Plot Title', value='plot.title',
                                      textInput('plotTitle', '')
