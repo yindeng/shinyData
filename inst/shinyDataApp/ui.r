@@ -168,17 +168,15 @@ shinyUI(navbarPage(
                   ),
 
                  tabPanel('Customize',
-                          navlistPanel(id='customizeItem1', well=FALSE,
-                                       tabPanel('Plot Title', value='plot.title',
-                                                textInput('plotTitle', '')
-                                       ),
-                                       tabPanel('X Axis Title', value='axis.title.x',
-                                                textInput('plotXlab', '')
-                                       ),
-                                       tabPanel('Y Axis Title', value='axis.title.y',
-                                                textInput('plotYlab', '')
-                                       )
-                          ),
+                          textInput('plotTitle', 'Plot Title'),
+                          fluidRow(
+                            column(6,
+                                   textInput('plotXlab', 'X Axis Title')
+                            ),
+                            column(6,
+                                   textInput('plotYlab', 'Y Axis Title')
+                            )),
+                          h4('Formatting'),
                           fluidRow(
                             column(6,
                                    shinyTree('customizeItem')
