@@ -14,8 +14,12 @@ observe({
             sheetList[[currentSheet]][['dynamicProperties']][['formatting']] <<- list()
           }
           if(is.null(sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[v]])){
-            sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[v]] <<-
-              structure(list(), 'type'=gg_element_tree[[v]][['class']])
+            formats <- structure(list(), 'type'=gg_element_tree[[v]][['class']])
+            if(attr(formats, 'type')=='unit'){
+              ## set default unit
+              formats[['unitUnits']] <- 'char'
+            }
+            sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[v]] <<- formats
           }
         }
       }
@@ -115,6 +119,9 @@ lapply(list(list(inputId='textFamily', inputType='select'),
             list(inputId='lineSize', inputType='numeric'),
             list(inputId='lineLinetype', inputType='numeric'),
             list(inputId='lineLineend', inputType='numeric'),
+
+            list(inputId='unitX', inputType='numeric'),
+            list(inputId='unitUnits', inputType='select'),
 
             list(inputId='elementBlank', inputType='checkbox')
             ),

@@ -396,7 +396,10 @@ shinyServer(function(input, output, session) {
                          if(!isEmpty(cus)){
                            cus1 <- cus[!sapply(cus, isEmpty)]
                            names(cus1) <- tolower(substring(names(cus1), 5)) # get rid of the 4-char prefix like 'text', 'rect', etc.
-                           do.call(attr(cus, 'type'), cus1)
+                           switch(attr(cus, 'type'),
+                                  'unit'=if(!isEmpty(cus1$x) && !isEmpty(cus1$units)) do.call('unit', cus1),
+                                  'character'=cus1[[1]],
+                                  do.call(attr(cus, 'type'), cus1))
                          }
                        })
               themeElementCalls <- themeElementCalls[!sapply(themeElementCalls, is.null)]

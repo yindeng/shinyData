@@ -18,7 +18,7 @@ options(shiny.trace = FALSE)  # change to TRUE for trace
 options(shiny.maxRequestSize = 100*1024^2)  # Set the upload limit to 100MB
 ## see https://groups.google.com/forum/#!topic/shiny-discuss/2wgIG3dOEZI
 
-require(shiny); require(reshape); require(ggplot2); require(Hmisc); require(uuid); #require(plotly);
+require(grid); require(shiny); require(reshape); require(ggplot2); require(Hmisc); require(uuid); #require(plotly);
 require(tables); require(tools); require(png); require(data.table); require(shinysky); require(Cairo)
 require(knitr); require(rmarkdown); require(shinyAce); require(shinyTree)
 
@@ -39,7 +39,9 @@ GeomChoices <- c('Text'='text', 'Bar'='bar','Line'='line',
                  'Path'='path','Polygon'='polygon',
                  'Boxplot'='boxplot')
 StatChoices <- c('Identity'='identity','Count'='bin','Summary'='summary','Boxplot'='boxplot')
-
+UnitChoices <- c('Normalized Parent Coordinates'='npc', 'Centimeters'='cm', 'Inches'='inches',
+                 'Millimeters'='mm', 'Points'='points', 'Lines of Text'='lines',
+                 'Font Height'='char')
 
 getAesChoices <- function(geom, stat='identity'){
   switch(geom,
@@ -144,8 +146,9 @@ extrafontsImported <- (system.file("fontmap/fonttable.csv", package = "extrafont
 FontFamilyChoices <- c("AvantGarde", "Bookman", "Courier", "Helvetica",
   "Helvetica-Narrow", "NewCenturySchoolbook", "Palatino", "Times")
 if(extrafontsImported) FontFamilyChoices <- extrafont::fonts()
+FontFamilyChoices <- c('Choose'='', FontFamilyChoices)
 
 
-FontFaceChoices <- c("Plain"="plain","Bold"="bold","Italic"="italic","Bold & Italic"="bold.italic")
+FontFaceChoices <- c('Choose'='', "Plain"="plain","Bold"="bold","Italic"="italic","Bold & Italic"="bold.italic")
 
 
