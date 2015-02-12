@@ -168,33 +168,58 @@ shinyUI(navbarPage(
                   ),
 
                  tabPanel('Customize',
-                          shinyTree('customizeItem'),
                           navlistPanel(id='customizeItem1', well=FALSE,
-                            'Labels',
-                            tabPanel('Plot Title', value='plot.title',
-                                     textInput('plotTitle', '')
-                                     ),
-                            tabPanel('X Axis Title', value='axis.title.x',
-                                        textInput('plotXlab', '')
+                                       tabPanel('Plot Title', value='plot.title',
+                                                textInput('plotTitle', '')
+                                       ),
+                                       tabPanel('X Axis Title', value='axis.title.x',
+                                                textInput('plotXlab', '')
+                                       ),
+                                       tabPanel('Y Axis Title', value='axis.title.y',
+                                                textInput('plotYlab', '')
+                                       )
+                          ),
+                          fluidRow(
+                            column(6,
+                                   shinyTree('customizeItem')
+                                   ),
+                            column(6,
+                                   checkboxInput('elementBlank', 'Hide Element', value=FALSE),
+                                   conditionalPanel('output.ggElementType=="element_text"',
+                                                    fluidRow(
+                                                      selectInput('textFamily','Font Family', choices=FontFamilyChoices),
+                                                      selectInput('textFace', 'Font Face', choices=FontFaceChoices),
+                                                      strong('Font Color'), br(),
+                                                      jscolorInput('textColor'), br(),
+                                                      numericInput('textSize', 'Font Size (pts)', value=NULL, step=0.1),
+                                                      numericInput('textHjust', 'Horizontal Adjustment', value=NULL, step=0.1),
+                                                      numericInput('textVjust', 'Vertical Adjustment', value=NULL, step=0.1),
+                                                      numericInput('textAngle', 'Angle (in [0,360])', value=NULL, step=1),
+                                                      numericInput('textLineheight', 'Text Line Height', value=NULL, step=0.1)
+                                                    )
+                                   ),
+                                   conditionalPanel('output.ggElementType=="element_rect"',
+                                                    fluidRow(
+                                                      strong('Border Color'), br(),
+                                                      jscolorInput('rectColor'), br(),
+                                                      strong('Fill'), br(),
+                                                      jscolorInput('rectFill'), br(),
+                                                      numericInput('rectSize', 'Border Line Width (pts)', value=NULL, step=0.1),
+                                                      numericInput('rectLinetype', 'Border Line Type', value=NULL, step=1)
+                                                    )
+                                   ),
+                                   conditionalPanel('output.ggElementType=="element_line"',
+                                                    fluidRow(
+                                                      strong('Line Color'), br(),
+                                                      jscolorInput('lineColor'), br(),
+                                                      numericInput('lineSize', 'Line Width (pts)', value=NULL, step=0.1),
+                                                      numericInput('lineLinetype', 'Line Type', value=NULL, step=1),
+                                                      numericInput('lineLineend', 'Line End', value=NULL, step=1)
+                                                    )
+                                   )
+
+                                   )
                             ),
-                            tabPanel('Y Axis Title', value='axis.title.y',
-                                     textInput('plotYlab', '')
-                            )
-                            ),
-                          conditionalPanel('true',
-                                           h4('Format Text'),
-                                           fluidRow(
-                                             selectInput('textFamily','Font Family', choices=FontFamilyChoices),
-                                             selectInput('textFace', 'Font Face', choices=FontFaceChoices),
-                                             strong('Font Color'),
-                                             jscolorInput('textColor'),
-                                             numericInput('textSize', 'Font Size (pts)', value=NULL, step=0.1),
-                                             numericInput('textHjust', 'Horizontal Adjustment', value=NULL, step=0.1),
-                                             numericInput('textVjust', 'Vertical Adjustment', value=NULL, step=0.1),
-                                             numericInput('textAngle', 'Angle (in [0,360])', value=NULL, step=1),
-                                             numericInput('textLineheight', 'Line Height', value=NULL, step=0.1)
-                                             )
-                                           ),
                           br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br()
                           )
                )

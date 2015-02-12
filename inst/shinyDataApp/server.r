@@ -390,13 +390,15 @@ shinyServer(function(input, output, session) {
               themeElementCalls <-
                 sapply(sheetList[[currentSheet]][['dynamicProperties']][['formatting']],
                        simplify = FALSE, USE.NAMES = TRUE,
-                                          function(cus){
-                if(!isEmpty(cus)){
-                  cus1 <- cus[!sapply(cus, isEmpty)]
-                  names(cus1) <- tolower(substring(names(cus1), 5)) # get rid of the 'text' prefix
-                  do.call(attr(cus, 'type'), cus1)
-                }
-              })
+                       function(cus){
+                         eleBlank <- attr(cus, 'elementBlank')
+                         if(!is.null(eleBlank) && eleBlank) return(element_blank())
+                         if(!isEmpty(cus)){
+                           cus1 <- cus[!sapply(cus, isEmpty)]
+                           names(cus1) <- tolower(substring(names(cus1), 5)) # get rid of the 4-char prefix like 'text', 'rect', etc.
+                           do.call(attr(cus, 'type'), cus1)
+                         }
+                       })
               themeElementCalls <- themeElementCalls[!sapply(themeElementCalls, is.null)]
 
 

@@ -79,9 +79,23 @@ lapply(list(list(inputId='plotTitle', inputType='text'),
        })
 
 
+output$ggElementType <- reactive({
+  currentSheet <- projProperties[['activeSheet']]
+  s <- ''
+  if(!isEmpty(currentSheet)){
+    customizeItem <- (sheetList[[currentSheet]][['dynamicProperties']][['customizeItem']])
+    isolate({
+      if(!isEmpty(customizeItem) && !is.null(sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[customizeItem]])){
+        s <- attr(sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[customizeItem]], 'type')
+      }
+    })
+  }
+  null2String(s)
+})
+outputOptions(output, "ggElementType", suspendWhenHidden=FALSE)
 
 ###########################
-## Text Formatting
+## Formatting
 
 lapply(list(list(inputId='textFamily', inputType='select'),
             list(inputId='textFace', inputType='select'),
@@ -90,7 +104,20 @@ lapply(list(list(inputId='textFamily', inputType='select'),
             list(inputId='textHjust', inputType='numeric'),
             list(inputId='textVjust', inputType='numeric'),
             list(inputId='textAngle', inputType='numeric'),
-            list(inputId='textLineheight', inputType='numeric')),
+            list(inputId='textLineheight', inputType='numeric'),
+
+            list(inputId='rectColor', inputType='color'),
+            list(inputId='rectFill', inputType='color'),
+            list(inputId='rectSize', inputType='numeric'),
+            list(inputId='rectLinetype', inputType='numeric'),
+
+            list(inputId='lineColor', inputType='color'),
+            list(inputId='lineSize', inputType='numeric'),
+            list(inputId='lineLinetype', inputType='numeric'),
+            list(inputId='lineLineend', inputType='numeric'),
+
+            list(inputId='elementBlank', inputType='checkbox')
+            ),
        function(x){
          assign(paste0('observer_', x$inputId, '_push'),
                 observe({
@@ -100,16 +127,21 @@ lapply(list(list(inputId='textFamily', inputType='select'),
                     if(!isEmpty(currentSheet)) {
                       customizeItem <- sheetList[[currentSheet]][['dynamicProperties']][['customizeItem']]
                       if(!isEmpty(customizeItem)){
-                        if(x$inputId=='textColor' && !isEmpty(v)) v <- paste0("#", v)
-                        if(are.vectors.different(v, sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[customizeItem]][[x$inputId]])){
-                          sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[customizeItem]][[x$inputId]] <<- v
+                        if(x$inputType=='color' && !isEmpty(v)) v <- paste0("#", v)
+                        if(x$inputId=='elementBlank'){
+                          if(!isEmpty(v)) attr(sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[customizeItem]],
+                                               'elementBlank') <<- v
+                        } else {
+                          if(are.vectors.different(v, sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[customizeItem]][[x$inputId]])){
+                            sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[customizeItem]][[x$inputId]] <<- v
+                          }
                         }
                       }
                     }
                   })
                 }),
                 sessionEnv)
-         if(x$inputId=='textColor') return() ## no updateJsColorInput is available yet
+         if(x$inputType=='color') return() ## no updateJsColorInput is available yet
          assign(paste0('observer_', x$inputId, '_pull'),
                 observe({
                   updateInput[[x$inputId]]
@@ -119,13 +151,19 @@ lapply(list(list(inputId='textFamily', inputType='select'),
                     customizeItem <- (sheetList[[currentSheet]][['dynamicProperties']][['customizeItem']])
                     isolate({
                       if(!isEmpty(customizeItem) && !is.null(sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[customizeItem]])){
-                        s <- sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[customizeItem]][[x$inputId]]
+                        if(x$inputId=='elementBlank'){
+                          s <- attr(sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[customizeItem]],
+                                    'elementBlank')
+                        } else {
+                          s <- sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[customizeItem]][[x$inputId]]
+                        }
                       }
                     })
                   }
 
                   switch(x$inputType,
                          'numeric'=updateNumericInput(session, x$inputId, value=null2String(s)),
+                         'checkbox'=updateCheckboxInput(session, x$inputId, value=null2String(s)),
                          'select'=updateSelectInput(session, x$inputId, selected=null2String(s)))
 
                 }),
@@ -133,6 +171,6 @@ lapply(list(list(inputId='textFamily', inputType='select'),
        })
 
 
-## End of Text Formatting
+## End of Formatting
 ###########################
 
