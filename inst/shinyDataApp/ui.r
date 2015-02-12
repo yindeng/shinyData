@@ -179,7 +179,7 @@ shinyUI(navbarPage(
                           h4('Formatting'),
                           fluidRow(
                             column(6,
-                                   shinyTree('customizeItem')
+                                   shinyTree('customizeItem', search=TRUE)
                                    ),
                             column(6,
                                    conditionalPanel('output.ggElementType!="unit" && output.ggElementType!="character" && output.ggElementType!=""',
