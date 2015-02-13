@@ -951,18 +951,21 @@ output$reshapedDat <- renderTable({
   if(!isEmpty(currentSheet)){sheetList[[currentSheet]][['dynamicProperties']][['outputTable']]}
 })
 
-output$ggplot <- renderPlot({
+ggplotOutput <- reactiveValues()
+observe({
   if(input$autoRefresh=='refresh'){
     currentSheet <- projProperties[['activeSheet']]
     if(!isEmpty(currentSheet)){
-      sheetList[[currentSheet]][['plotR']]()
+      ggplotOutput[['plot']] <- sheetList[[currentSheet]][['plotR']]()
     }
   } else {
-    gg <- last_plot()
-    if(!is.null(gg)) gg <- gg  + theme_grey()
-    gg
+    isolate({
+      if(!is.null(ggplotOutput[['plot']])) ggplotOutput[['plot']] <- ggplotOutput[['plot']] + theme_grey()
+    })
   }
-
+})
+output$ggplot <- renderPlot({
+  ggplotOutput[['plot']]
 })
 
 
