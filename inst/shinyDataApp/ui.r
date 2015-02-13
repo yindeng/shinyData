@@ -10,6 +10,13 @@ function (inputId, label, multiple = FALSE, accept = NULL)
   tagList(tags$label(label), inputTag)
 }
 
+textareaInput <- function(inputId, label, value="", placeholder="", rows=2){
+  tagList(
+    div(strong(label), style="margin-top: 5px;"),
+    tags$style(type="text/css", "textarea {width:100%; margin-top: 5px;}"),
+    tags$textarea(id = inputId, placeholder = placeholder, rows = rows, value))
+}
+
 
 shinyUI(navbarPage(
   id='mainNavBar',
@@ -166,7 +173,8 @@ shinyUI(navbarPage(
                   ),
 
                  tabPanel('Customize',
-                          textInput('plotTitle', 'Plot Title'),
+                          textareaInput(inputId = 'plotTitle', label="Plot Title", value="",
+                                        placeholder = 'Enter Plot Title here', rows = 2),
                           fluidRow(
                             column(6,
                                    textInput('plotXlab', 'X Axis Title')
