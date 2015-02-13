@@ -95,7 +95,7 @@ shinyUI(navbarPage(
                  ))
                ),
                fluidRow(
-                 column(6, selectInput(inputId='layerList', label='', choices=NULL, selected='')),
+                 column(6, selectInput(inputId='layerList', label='', choices=NULL, selected='', selectize=FALSE, size=3)),
                  column(6, fluidRow(
                    actionButton(inputId='addLayer', label='Add Overlay', styleclass="primary", size="small"),
                    actionButton(inputId='bringToTop', label='Bring to Top', styleclass="primary", size="small"),
@@ -139,26 +139,24 @@ shinyUI(navbarPage(
                  tabPanel('Mapping',
 
                           fluidRow(
-                            column(6,
+                            column(4,
                                    selectInput(inputId='aesList', label='',
-                                               choices=NULL)
+                                               choices=NULL, selectize=FALSE, size=15)
                                    ),
-                            column(6,
+                            column(8,
                                    conditionalPanel('input.layerList != "Plot" ||
                                                     (input.aesList!="aesX" && input.aesList!="aesY")',
                                                     radioButtons('aesMapOrSet', '', choices=c('Map to variable'='map',
                                                                                               'Set to fixed value'='set'),
-                                                                 selected='map')
-                                                    )
+                                                                 selected='map', inline=TRUE)
+                                                    ),
 
+                                   uiOutput('mapOrSetUI'),
+                                   conditionalPanel('(input.aesList=="aesColor" || input.aesList=="aesBorderColor") &&
+                                           input.aesMapOrSet=="set"',
+                                                    jscolorInput('aesValueColor'))
                                    )
                             ),
-
-                          uiOutput('mapOrSetUI'),
-                          conditionalPanel('(input.aesList=="aesColor" || input.aesList=="aesBorderColor") &&
-                                           input.aesMapOrSet=="set"',
-                                           jscolorInput('aesValueColor')),
-
                           br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br()
                         ),
                  tabPanel('Filters',
