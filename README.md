@@ -15,7 +15,7 @@ To install the package locally, execute the following R code (you can use the sa
 ```
 if(!require(devtools)) install.packages("devtools")
 devtools::install_github("trestletech/shinyAce")
-devtools::install_github("AnalytixWare/ShinySky")
+devtools::install_github("AnalytixWare/ShinySky@7031af5906d6ec244859d1ba676a9ca8e1541342")
 devtools::install_github("trestletech/shinyTree")
 devtools::install_github("yindeng/shinyData")
 ```
