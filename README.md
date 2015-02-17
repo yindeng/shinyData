@@ -10,9 +10,9 @@ To run the web based version of shinyData without installing anything, simply go
 To install the package locally, execute the following R code (you can use the same code to get updates as well): 
 ```
 if(!require(devtools)) install.packages("devtools")
-devtools::install_github("trestletech/shinyAce")
-devtools::install_github("AnalytixWare/ShinySky@7031af5906d6ec244859d1ba676a9ca8e1541342")
-devtools::install_github("trestletech/shinyTree")
+devtools::install_github("trestletech/shinyAce@a2268d545e0ea30eb44c9dca517aec1165b06a51")
+devtools::install_github("AnalytixWare/ShinySky@15c29bec4e7c5e694625e571656515a8ace7f376")
+devtools::install_github("trestletech/shinyTree@522f8a7e28565bec0f634faf5aa1e75da247de44")
 devtools::install_github("yindeng/shinyData")
 ```
 

@@ -224,7 +224,10 @@ shinyServer(function(input, output, session) {
                   temp
                 }, simplify=FALSE)
                 aes.current <- aes.current[sapply(aes.current,
-                     function(x) !are.vectors.different(x[['aesMapOrSet']],'set') || !is.null(x[['aesField']]))]
+                     function(x) {
+                       isSetting <- !are.vectors.different(x[['aesMapOrSet']],'set')
+                       (isSetting && !isEmpty(x[['aesValue']])) || (!isSetting && !isEmpty(x[['aesField']]))
+                     })]
 
                 borderColor <- aes.current[['aesBorderColor']]
                 aes.current[['aesBorderColor']] <- NULL

@@ -134,7 +134,6 @@ lapply(list(list(inputId='textFamily', inputType='select'),
                     if(!isEmpty(currentSheet)) {
                       customizeItem <- sheetList[[currentSheet]][['dynamicProperties']][['customizeItem']]
                       if(!isEmpty(customizeItem)){
-                        if(x$inputType=='color' && !isEmpty(v)) v <- paste0("#", v)
                         if(x$inputId=='elementBlank'){
                           if(!isEmpty(v)) attr(sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[customizeItem]],
                                                'elementBlank') <<- v
@@ -148,7 +147,7 @@ lapply(list(list(inputId='textFamily', inputType='select'),
                   })
                 }),
                 sessionEnv)
-         if(x$inputType=='color') return() ## no updateJsColorInput is available yet
+
          assign(paste0('observer_', x$inputId, '_pull'),
                 observe({
                   updateInput[[x$inputId]]
@@ -170,6 +169,7 @@ lapply(list(list(inputId='textFamily', inputType='select'),
 
                   switch(x$inputType,
                          'numeric'=updateNumericInput(session, x$inputId, value=null2String(s)),
+                         'color'=updateColorInput(session, x$inputId, value=null2String(s)),
                          'checkbox'=updateCheckboxInput(session, x$inputId, value=null2String(s)),
                          'select'=updateSelectInput(session, x$inputId, selected=null2String(s)))
 

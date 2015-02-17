@@ -151,4 +151,4 @@ FontFamilyChoices <- c('Choose'='', FontFamilyChoices)
 
 FontFaceChoices <- c('Choose'='', "Plain"="plain","Bold"="bold","Italic"="italic","Bold & Italic"="bold.italic")
 
-
+source('color.r', local=TRUE)

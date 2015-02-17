@@ -348,7 +348,7 @@ observe({
               sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesValue']] <<-
                 switch(currentAes,
                        'aesLabel'='My Label', 'aesFamily'='Times', 'aesFontface'='plain',
-                       'aesColor'=, 'aesBorderColor'='darkblue',
+                       'aesColor'=, 'aesBorderColor'='',
                        'aesSize'=8, 'aesLineheight'=1,
                        0
                 )
@@ -438,7 +438,8 @@ output$mapOrSetUI <- renderUI({
                    'aesLabel'=textInput('aesValue', '', value=aes[['aesValue']]),
                    'aesFontface'=selectInput('aesValue','',choices=FontFaceChoices, selected=aes[['aesValue']]),
                    'aesFamily'=selectInput('aesValue','',choices=FontFamilyChoices, selected=aes[['aesValue']]),
-                   'aesColor'=, 'aesBorderColor'=NULL,
+                   'aesColor'=, 'aesBorderColor'=colorInput('aesValue', '', value=aes[['aesValue']]),
+                   'aesShape'=, 'aesLineType'=numericInput('aesValue', 'Value', value=aes[['aesValue']], step=1),
                    numericInput('aesValue', 'Value', value=aes[['aesValue']], step=0.1)
             )
           }
@@ -449,49 +450,21 @@ output$mapOrSetUI <- renderUI({
 })
 
 ## set aesValue
-observe({
+observeEvent(input$aesValue,
+             {
   v <- input$aesValue
-  vColor <- input$aesValueColor
-  ## using isEmpty instead of is.null below will cause aesValue not being able to be deleted by user
-  ## not ideal, but due to the inability of setting value on jscolorPicker
-  isolate({
-    currentSheet <- (projProperties[['activeSheet']])
-    if(!isEmpty(currentSheet)){
-      currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-      if(!isEmpty(currentLayer)){
-        currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
-        if(!isEmpty(currentAes)){
-          if((currentAes=='aesColor' || currentAes=='aesBorderColor') && !isEmpty(vColor)) v <- paste('#', vColor, sep='')
-          if(!isEmpty(v)) sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesValue']] <<- v
-        }
+  currentSheet <- (projProperties[['activeSheet']])
+  if(!isEmpty(currentSheet)){
+    currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
+    if(!isEmpty(currentLayer)){
+      currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
+      if(!isEmpty(currentAes)){
+        sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesValue']] <<- v
       }
     }
-  })
-
+  }
 })
-# observe({
-#   updateInput[['aesValue']]
-#   currentSheet <- (projProperties[['activeSheet']])
-#   s <- 0
-#   if(!isEmpty(currentSheet)){
-#     currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-#     if(!isEmpty(currentLayer)){
-#       currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
-#       if(!isEmpty(currentAes)){
-#         s <- isolate(sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesValue']])
-#         switch(currentAes,
-#                'aesLabel'=updateTextInput(session, 'aesValue', value=s),
-#                'aesFamily'=, 'aesFontface'=updateSelectInput(session, 'aesValue', selected=s),
-#                'aesColor'=, 'aesBorderColor'=
-#                  NULL, # no update jscolorInput available
-#
-#                updateNumericInput(session, 'aesValue', value=s)
-#         )
-#       }
-#     }
-#   }
-#
-# })
+
 
 ## set aes field
 observe({
@@ -547,27 +520,7 @@ observe({
   }
 
 })
-# observe({
-#   updateInput[['aesField']]
-#   currentSheet <- (projProperties[['activeSheet']])
-#   s <- choices <- ''
-#   if(!isEmpty(currentSheet)){
-#     currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-#     if(!isEmpty(currentLayer)){
-#       currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
-#       if(!isEmpty(currentAes)){
-#         s <- isolate(sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesField']])
-#         choices <- if(currentAes %in% c('aesX','aesY')) {
-#           sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['fieldChoices']]
-#         } else {
-#           sheetList[[currentSheet]][['fieldNames']]()
-#         }
-#       }
-#     }
-#   }
-#
-#   updateSelectizeInput(session, 'aesField', choices=null2String(choices), selected=null2String(s))
-# })
+
 
 output$canAesFieldBeContinuous <- reactive({
   ans <- FALSE

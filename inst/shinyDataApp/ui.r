@@ -155,13 +155,10 @@ shinyUI(navbarPage(
                                                     (input.aesList!="aesX" && input.aesList!="aesY")',
                                                     radioButtons('aesMapOrSet', '', choices=c('Map to variable'='map',
                                                                                               'Set to fixed value'='set'),
-                                                                 selected='map', inline=TRUE)
+                                                                 selected='', inline=TRUE)
                                                     ),
 
-                                   uiOutput('mapOrSetUI'),
-                                   conditionalPanel('(input.aesList=="aesColor" || input.aesList=="aesBorderColor") &&
-                                           input.aesMapOrSet=="set"',
-                                                    jscolorInput('aesValueColor'))
+                                   uiOutput('mapOrSetUI')
                                    )
                             ),
                           br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br()
@@ -193,8 +190,7 @@ shinyUI(navbarPage(
                                    conditionalPanel('output.ggElementType=="element_text"',
                                                     selectInput('textFamily','Font Family', choices=FontFamilyChoices),
                                                     selectInput('textFace', 'Font Face', choices=FontFaceChoices),
-                                                    strong('Font Color'), br(),
-                                                    jscolorInput('textColor'), br(),
+                                                    colorInput('textColor', 'Font Color'),
                                                     numericInput('textSize', 'Font Size (pts)', value=NULL, step=0.1),
                                                     numericInput('textHjust', 'Horizontal Adjustment', value=NULL, step=0.1),
                                                     numericInput('textVjust', 'Vertical Adjustment', value=NULL, step=0.1),
@@ -202,16 +198,13 @@ shinyUI(navbarPage(
                                                     numericInput('textLineheight', 'Text Line Height', value=NULL, step=0.1)
                                    ),
                                    conditionalPanel('output.ggElementType=="element_rect"',
-                                                    strong('Border Color'), br(),
-                                                    jscolorInput('rectColor'), br(),
-                                                    strong('Fill'), br(),
-                                                    jscolorInput('rectFill'), br(),
+                                                    colorInput('rectColor', 'Border Color'),
+                                                    colorInput('rectFill', 'Fill'),
                                                     numericInput('rectSize', 'Border Line Width (pts)', value=NULL, step=0.1),
                                                     numericInput('rectLinetype', 'Border Line Type', value=NULL, step=1)
                                    ),
                                    conditionalPanel('output.ggElementType=="element_line"',
-                                                    strong('Line Color'), br(),
-                                                    jscolorInput('lineColor'), br(),
+                                                    colorInput('lineColor', 'Line Color'),
                                                     numericInput('lineSize', 'Line Width (pts)', value=NULL, step=0.1),
                                                     numericInput('lineLinetype', 'Line Type', value=NULL, step=1),
                                                     numericInput('lineLineend', 'Line End', value=NULL, step=1)
