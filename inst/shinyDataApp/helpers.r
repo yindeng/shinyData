@@ -195,7 +195,7 @@ createNewLayer <- function(){
                  'aesList'=sapply(AesChoicesSimpleList,
                                   function(x) reactiveValues('aesAggregate'=FALSE,'aesDiscrete'=TRUE,'aesMapOrSet'='map'), simplify=FALSE))
 }
-createNewSheetObj <- function(name='Sheet'){
+createNewSheetObj <- function(name='Sheet', withPlotLayer=TRUE){
   SheetClass$new(
     'dynamicProperties'=reactiveValues(
       'name'=name,
@@ -204,8 +204,7 @@ createNewSheetObj <- function(name='Sheet'){
       'rows'='', 'rowChoices'='',
       'outputTable'=NULL,
       'outputDataframe'=NULL,
-      'layerList'=list(
-        'Plot'=createNewLayer()),
+      'layerList'=if(withPlotLayer) list('Plot'=createNewLayer()) else list(),
       'activeLayer'='Plot'))
 }
 

@@ -69,7 +69,7 @@ loadProject <- function(file, replaceOrMerge='replace'){
 
   for(si in names(allData$sl)){
     if(is.null(sheetList[[si]])){ # new sheet
-      sheetList[[si]] <<- createNewSheetObj()
+      sheetList[[si]] <<- createNewSheetObj(withPlotLayer=FALSE)
     }
     for(n in names(allData$sl[[si]][['dynamicProperties']])){
       x <- allData$sl[[si]][['dynamicProperties']][[n]]
