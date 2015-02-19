@@ -151,7 +151,7 @@ outputOptions(output, "uploadingTextFile", suspendWhenHidden=FALSE)
 output$datPreview <- renderDataTable({
   currentDat <- projProperties[['activeDat']]
   if(!isEmpty(currentDat)){
-    datPrev <- datList[[currentDat]][['datR']]()
+    datPrev <- copy(datList[[currentDat]][['datR']]())  # use of copy is necessary since setnames modify by reference
     setnames(datPrev, names(datList[[currentDat]][['fieldNames']]()))
     datPrev
   }
