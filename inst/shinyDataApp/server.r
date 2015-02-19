@@ -420,7 +420,7 @@ shinyServer(function(input, output, session) {
       }
     }
   }
-  isolate(addSheet())
+
 
 
   isDatBasedonSheet <- function(datId, sheetId){
@@ -440,6 +440,7 @@ shinyServer(function(input, output, session) {
   source('data.r', local=TRUE)
   source('sheets.r', local=TRUE)
   source('sheetsCustomize.r', local=TRUE)
+  isolate(addSheet())
   source('project.r', local=TRUE)
   source('docs.r', local=TRUE)
 
