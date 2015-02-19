@@ -17,12 +17,9 @@ shinyServer(function(input, output, session) {
                                 'textFamily'=0, 'textFace'=0, 'textColor'=0,'textSize'=0, 'textHjust'=0, 'textVjust'=0,
                                 'textAngle'=0, 'textLineheight'=0)
 
-  #                                 'layerX'=0,'layerY'=0,
-  #                                 'layerColor'=0,'layerFill'=0,'layerSize'=0,'layerAlpha'=0,'layerLabel'=0,
-  #                                 'layerLineType'=0)
-
   triggerUpdateInput <- function(inputId){
-    updateInput[[inputId]] <<- updateInput[[inputId]] + 1
+    if(is.null(updateInput[[inputId]])) updateInput[[inputId]] <- 0
+    updateInput[[inputId]] <- updateInput[[inputId]] + 1
   }
 
   datList <- list()
