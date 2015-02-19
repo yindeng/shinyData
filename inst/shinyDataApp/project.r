@@ -3,21 +3,38 @@
 ####################################################
 ## Project saving and loading
 ####################################################
+shrink <- function(x){
+  if(is.list(x) && !is.data.frame(x)){
+    if(is.reactivevalues(x)){
+      x <- lapply(reactiveValuesToList(x), function(y){
+        if(typeof(y)!='closure') shrink(y) else NULL
+      })
+      attr(x, 'wasReavtive') <- TRUE
+    } else {
+      x <- lapply(x, shrink)
+    }
+  } else {
+    if(typeof(x)!='closure') x else NULL
+  }
+  x
+}
+
 output$downloadProject <- downloadHandler(
   filename = function() { 'MyProject.sData' },
   content = function(file) {
     isolate({
-      for(di in names(datList)){
-        datList[[di]]$removeDatDependencies()
-      }
-      allData <- list(pp=reactiveValuesToList(projProperties),
-                      dl=datList,
-                      sl=sheetList,
-                      docl=docList)
+
+      allData <- list(pp=shrink(projProperties),
+                      dl=lapply(datList, function(d){
+                        list('staticProperties'=d[['staticProperties']],
+                             'dynamicProperties'=shrink(d[['dynamicProperties']]))
+                      }),
+                      sl=lapply(sheetList, function(d){
+                        list('dynamicProperties'=shrink(d[['dynamicProperties']]))
+                      }),
+                      docl=shrink(docList))
       save(allData, file=file)
-      for(di in names(datList)){
-        datList[[di]]$setDatDependencies()
-      }
+
     })
   }
 )
