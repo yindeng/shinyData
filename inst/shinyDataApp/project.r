@@ -70,6 +70,7 @@ loadProject <- function(file, replaceOrMerge='replace'){
   for(si in names(allData$sl)){
     if(is.null(sheetList[[si]])){ # new sheet
       sheetList[[si]] <<- createNewSheetObj(withPlotLayer=FALSE)
+      setSheetReactives(si)
     }
     for(n in names(allData$sl[[si]][['dynamicProperties']])){
       x <- allData$sl[[si]][['dynamicProperties']][[n]]
@@ -109,7 +110,6 @@ loadProject <- function(file, replaceOrMerge='replace'){
       }
     }
   }
-  setSheetReactives()
 
   for(di in names(allData$docl)){
     if(is.null(docList[[di]])){ # new doc
