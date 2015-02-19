@@ -112,8 +112,8 @@ shinyUI(navbarPage(
                    ))
                  ),
 
-               tabsetPanel(
-                 tabPanel('Type',
+               tabsetPanel(id='sheetControlTab',
+                 tabPanel('Type', value='sheetTabType',
                           fluidRow(
                             column(6,
                                    selectInput(inputId='markList', label='Mark Type',
@@ -143,7 +143,7 @@ shinyUI(navbarPage(
                           ),
                           br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br()
                           ),
-                 tabPanel('Mapping',
+                 tabPanel('Mapping', value='sheetTabMapping',
 
                           fluidRow(
                             column(4,
@@ -163,13 +163,13 @@ shinyUI(navbarPage(
                             ),
                           br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br()
                         ),
-                 tabPanel('Filters',
+                 tabPanel('Filters', value='sheetTabFilters',
                           selectizeInput(inputId='filterField', label='Field',
                                          choices=NULL, multiple=FALSE),
                           br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br()
                   ),
 
-                 tabPanel('Customize',
+                 tabPanel('Customize', value='sheetTabCustomize',
                           textareaInput(inputId = 'plotTitle', label="Plot Title", value="",
                                         placeholder = 'Enter Plot Title here', rows = 2),
                           fluidRow(

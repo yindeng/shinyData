@@ -181,6 +181,24 @@ observe({
   }
 })
 
+## sheet control tab
+observe({
+  v <- input$sheetControlTab
+  isolate({
+    currentSheet <- (projProperties[['activeSheet']])
+    if(!isEmpty(currentSheet)) sheetList[[currentSheet]][['dynamicProperties']][['sheetControlTab']] <<- v
+  })
+
+})
+observe({
+  updateInput[['sheetControlTab']]
+  currentSheet <- projProperties[['activeSheet']]
+  s <- if(!isEmpty(currentSheet)){
+    isolate(sheetList[[currentSheet]][['dynamicProperties']][['sheetControlTab']])
+  } else ''
+  updateTabsetPanel(session, 'sheetControlTab', selected=ifempty(s, 'sheetTabType'))
+})
+
 ## Selecting data for sheet
 observe({
   v <- input$sheetDatList
