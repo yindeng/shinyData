@@ -11,12 +11,20 @@ shrink <- function(x){
       })
       attr(x, 'wasReavtive') <- TRUE
     } else {
+      ## x is an ordinary list
+      ## need to preserve attributes
+      attrs <- attributes(x)
       x <- lapply(x, shrink)
+      attributes(x) <- attrs
     }
   } else {
     if(typeof(x)!='closure') x else NULL
   }
   x
+}
+
+wasReactivevalues <- function(x){
+  !is.null(attr(x, 'wasReavtive'))
 }
 
 output$downloadProject <- downloadHandler(
@@ -67,7 +75,7 @@ loadProject <- function(file, replaceOrMerge='replace'){
         if(is.null(datList[[di]][['dynamicProperties']][[n]])) datList[[di]][['dynamicProperties']][[n]] <<- list()
         names1 <- names(x)
         for(n1 in names1){
-          if(is.reactivevalues(x[[n1]])){
+          if(wasReactivevalues(x[[n1]])){
             if(is.null(datList[[di]][['dynamicProperties']][[n]][[n1]])) datList[[di]][['dynamicProperties']][[n]][[n1]] <<- reactiveValues()
             names2 <- names(x[[n1]])
             for(n2 in names2){
@@ -95,7 +103,7 @@ loadProject <- function(file, replaceOrMerge='replace'){
         if(is.null(sheetList[[si]][['dynamicProperties']][[n]])) sheetList[[si]][['dynamicProperties']][[n]] <<- list()
         names1 <- names(x)
         for(n1 in names1){
-          if(is.reactivevalues(x[[n1]])){
+          if(wasReactivevalues(x[[n1]])){
             if(is.null(sheetList[[si]][['dynamicProperties']][[n]][[n1]]))
               sheetList[[si]][['dynamicProperties']][[n]][[n1]] <<- createNewLayer()
             names2 <- names(x[[n1]])
@@ -103,11 +111,10 @@ loadProject <- function(file, replaceOrMerge='replace'){
               if(n2=='aesList'){
                 names3 <- names(x[[n1]][[n2]])
                 for(n3 in names3){
-                  if(is.reactivevalues(x[[n1]][[n2]][[n3]])){
+                  if(wasReactivevalues(x[[n1]][[n2]][[n3]])){
                     names4 <- names(x[[n1]][[n2]][[n3]])
                     for(n4 in names4){
-                      if(typeof(x[[n1]][[n2]][[n3]][[n4]]) != 'closure')
-                        sheetList[[si]][['dynamicProperties']][[n]][[n1]][[n2]][[n3]][[n4]] <<- x[[n1]][[n2]][[n3]][[n4]]
+                      sheetList[[si]][['dynamicProperties']][[n]][[n1]][[n2]][[n3]][[n4]] <<- x[[n1]][[n2]][[n3]][[n4]]
                     }
                     setAesReactives(si,n1,n3)
                   } else {
