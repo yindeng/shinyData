@@ -123,7 +123,7 @@ loadProject <- function(file, replaceOrMerge='replace'){
   }
 
   ## update all UI
-  sapply(names(updateInput), triggerUpdateInput)
+  sapply(unique(c(names(input), names(updateInput))), triggerUpdateInput)
   updateTabsetPanel(session, 'mainNavBar', selected='Visualize')
 }
 
