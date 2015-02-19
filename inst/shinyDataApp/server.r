@@ -401,7 +401,13 @@ shinyServer(function(input, output, session) {
                            names(cus1) <- tolower(substring(names(cus1), 5)) # get rid of the 4-char prefix like 'text', 'rect', etc.
                            switch(attr(cus, 'type'),
                                   'unit'=if(!isEmpty(cus1$x) && !isEmpty(cus1$units)) do.call('unit', cus1),
-                                  'character'=cus1[[1]],
+                                  'character'=if(!isEmpty(cus1$mainvalue)){
+                                    if(cus1$mainvalue!='custom_'){
+                                      cus1$mainvalue
+                                    } else {
+                                      c(cus1$altvalue1, cus1$altvalue2)
+                                    }
+                                  },
                                   do.call(attr(cus, 'type'), cus1))
                          }
                        })

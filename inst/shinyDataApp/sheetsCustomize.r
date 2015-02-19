@@ -101,6 +101,62 @@ outputOptions(output, "ggElementType", suspendWhenHidden=FALSE)
 ###########################
 ## Formatting
 
+output$charSetting <- renderUI({
+  currentSheet <- projProperties[['activeSheet']]
+  if(!isEmpty(currentSheet)){
+    s <- (sheetList[[currentSheet]][['dynamicProperties']][['customizeItem']])
+    isolate({
+      vMain <- sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[s]][['charMainValue']]
+      v1 <- sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[s]][['charAltValue1']]
+      v2 <- sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[s]][['charAltValue2']]
+      switch(s,
+             'legend.text.align'=, 'legend.title.align'=list(
+               selectInput('charMainValue', 'Alignment', selected=vMain,
+                           choices=c('Choose'='', 'Left'=0, 'Right'=1,'Center'=0.5,
+                                     'Custom'='custom_')),
+               conditionalPanel('input.charMainValue=="custom_"',
+                                sliderInput('charAltValue1', 'Anchor', min=0, max=1, value=v1))
+               ),
+             'legend.direction'=list(
+               helpText('Layout of items in legends:'),
+               selectInput('charMainValue', '', selected=vMain,
+                           choices=c('Choose'='', 'Horizontal'='horizontal', 'Vertical'='vertical'))
+               ),
+             'legend.box'=list(
+               helpText('Arrangement of multiple legends:'),
+               selectInput('charMainValue', '', selected=vMain,
+                           choices=c('Choose'='', 'Horizontal'='horizontal', 'Vertical'='vertical'))
+             ),
+             'legend.position'=list(
+               selectInput('charMainValue', '', selected=vMain,
+                           choices=c('Choose'='', 'Right'='right','Bottom'='bottom',
+                                     'Top'='top','Left'='left','Custom'='custom_')),
+               conditionalPanel('input.charMainValue=="custom_"',
+                                sliderInput('charAltValue1', 'X', min=0, max=1, value=v1),
+                                sliderInput('charAltValue2', 'Y', min=0, max=1, value=v2))
+             ),
+             'legend.justification'=list(
+               helpText('Anchor point for positioning legend inside plot:'),
+               selectInput('charMainValue', '', selected=vMain,
+                           choices=c('Choose'='', 'Center'='center','Custom'='custom_')),
+               conditionalPanel('input.charMainValue=="custom_"',
+                                sliderInput('charAltValue1', 'X', min=0, max=1, value=v1),
+                                sliderInput('charAltValue2', 'Y', min=0, max=1, value=v2))
+             ),
+             'legend.box.just'=list(
+               helpText('Justification of each legend within the overall bounding box, when there are multiple legends.'),
+               selectInput('charMainValue', '', selected=vMain,
+                           choices=c('Choose'='', 'Right'='right','Bottom'='bottom',
+                                     'Top'='top','Left'='left'))
+             ),
+             'aspect.ratio'=list(
+               numericInput('charMainValue', 'Plot Aspect Ratio', value=vMain, step=0.1)
+               )
+      )
+    })
+  }
+})
+
 lapply(list(list(inputId='textFamily', inputType='select'),
             list(inputId='textFace', inputType='select'),
             list(inputId='textColor', inputType='color'),
@@ -123,6 +179,10 @@ lapply(list(list(inputId='textFamily', inputType='select'),
             list(inputId='unitX', inputType='numeric'),
             list(inputId='unitUnits', inputType='select'),
 
+            list(inputId='charMainValue', inputType='dynamic'), # no updating for dynamic UIs
+            list(inputId='charAltValue1', inputType='dynamic'),
+            list(inputId='charAltValue2', inputType='dynamic'),
+
             list(inputId='elementBlank', inputType='checkbox')
             ),
        function(x){
@@ -130,16 +190,26 @@ lapply(list(list(inputId='textFamily', inputType='select'),
                 observe({
                   v <- input[[x$inputId]]
                   isolate({
-                    currentSheet <- (projProperties[['activeSheet']])
-                    if(!isEmpty(currentSheet)) {
-                      customizeItem <- sheetList[[currentSheet]][['dynamicProperties']][['customizeItem']]
-                      if(!isEmpty(customizeItem)){
-                        if(x$inputId=='elementBlank'){
-                          if(!isEmpty(v)) attr(sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[customizeItem]],
-                                               'elementBlank') <<- v
-                        } else {
-                          if(are.vectors.different(v, sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[customizeItem]][[x$inputId]])){
-                            sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[customizeItem]][[x$inputId]] <<- v
+                    if(!is.null(v)){
+                      currentSheet <- (projProperties[['activeSheet']])
+                      if(!isEmpty(currentSheet)) {
+                        customizeItem <- sheetList[[currentSheet]][['dynamicProperties']][['customizeItem']]
+                        if(!isEmpty(customizeItem)){
+                          if(x$inputId=='elementBlank'){
+                            if(!isEmpty(v)) attr(sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[customizeItem]],
+                                                 'elementBlank') <<- v
+                          } else {
+                            if(are.vectors.different(v, sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[customizeItem]][[x$inputId]])){
+                              sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[customizeItem]][[x$inputId]] <<- v
+
+                              if(x$inputId=='charMainValue' && !isEmpty(v) && v=='custom_' &&
+                                   isEmpty(sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[customizeItem]][['charAltValue1']])){
+                                sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[customizeItem]][['charAltValue1']] <<- 0
+                                if(customizeItem %in% c('legend.position','legend.justification')){
+                                  sheetList[[currentSheet]][['dynamicProperties']][['formatting']][[customizeItem]][['charAltValue2']] <<- 0
+                                }
+                              }
+                            }
                           }
                         }
                       }
@@ -147,7 +217,7 @@ lapply(list(list(inputId='textFamily', inputType='select'),
                   })
                 }),
                 sessionEnv)
-
+         if(x$inputType=='dynamic') return()
          assign(paste0('observer_', x$inputId, '_pull'),
                 observe({
                   updateInput[[x$inputId]]
@@ -169,6 +239,7 @@ lapply(list(list(inputId='textFamily', inputType='select'),
 
                   switch(x$inputType,
                          'numeric'=updateNumericInput(session, x$inputId, value=null2String(s)),
+                         'slider'=updateSliderInput(session, x$inputId, value=null2String(s)),
                          'color'=updateColorInput(session, x$inputId, value=null2String(s)),
                          'checkbox'=updateCheckboxInput(session, x$inputId, value=null2String(s)),
                          'select'=updateSelectInput(session, x$inputId, selected=null2String(s)))

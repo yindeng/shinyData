@@ -212,8 +212,10 @@ shinyUI(navbarPage(
                                    conditionalPanel('output.ggElementType=="unit"',
                                                     numericInput('unitX', 'Value', value=NULL, step=0.1),
                                                     selectInput('unitUnits', 'Unit', choices=UnitChoices)
+                                   ),
+                                   conditionalPanel('output.ggElementType=="character"',
+                                                    uiOutput('charSetting')
                                    )
-
                                    )
                             ),
                           br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br()
