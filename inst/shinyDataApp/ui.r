@@ -117,10 +117,11 @@ shinyUI(navbarPage(
                           fluidRow(
                             column(6,
                                    selectInput(inputId='markList', label='Mark Type',
-                                               choices=GeomChoices),
+                                               choices=GeomChoices, selected='point'),
                                    selectInput(inputId='layerPositionType', label='Positioning',
                                                choices=c('Stack'='stack','Dodge'='dodge','Fill'='fill',
-                                                         'Identity'='identity','Jitter'='jitter')),
+                                                         'Identity'='identity','Jitter'='jitter'),
+                                               selected='identity'),
                                    fluidRow(
                                      column(6,
                                             textInput('layerPositionWidth', label='Width')
@@ -132,7 +133,7 @@ shinyUI(navbarPage(
                             ),
                             column(6,
                                    selectInput(inputId='statTypeList', label='Stat',
-                                               choices=StatChoices),
+                                               choices=StatChoices, selected='identity'),
                                    conditionalPanel('input.statTypeList=="summary"',
                                                     selectizeInput(inputId='yFunList', label='Summarize Y with',
                                                                    choices=YFunChoices,
