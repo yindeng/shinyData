@@ -343,6 +343,39 @@ shinyServer(function(input, output, session) {
             gg <- gg + do.call(paste('geom',geom,sep='_'),
                                c(aes.set.args, list(mapping=aess, data=datLayer, stat=stat, fun.y=fun.y, position=position)))
 
+            ## scales
+            allScales <- lapply(aes.map, function(x) x[['scale']])
+            if(!isEmpty(allScales)){
+              allScales <- allScales[!sapply(allScales, isEmpty)]
+              for(a in names(allScales)){
+                scale.args.mandatory <- list('name'=null2String(allScales[[a]][['legendTitle']]))
+                legend.type <- null2String(allScales[[a]][['legendType']])
+                scale.args.optional <- list('guide'=if(legend.type != 'custom') legend.type else {
+                  guide <- allScales[[a]][['legend']]
+                  if(!isEmpty(guide)){
+                    guide <- guide[!sapply(guide, isEmpty)]
+                    names(guide) <- make.names(names(guide), allow_=FALSE)  # convert _ to .
+                    guide.name <- if((a=='aesColor' || a=='aesFill') && !aes.map[[a]][['aesDiscrete']]) 'guide_colorbar' else 'guide_legend'
+                    do.call(guide.name, guide)
+                  }
+                })
+                scale.call <- switch(a, 'aesColor'=, 'aesFill'=if(aes.map[[a]][['aesDiscrete']]){
+
+                } else {  # continuous
+                  diverging <- allScales[[a]][['colorDiverging']]
+                  call.name <- paste('scale', tolower(substring(a, 4)), if(diverging) 'gradient2' else 'gradient', sep='_')
+                  scale.args.optional <- c(scale.args.optional, list('low'=allScales[[a]][['colorLow']], 'high'=allScales[[a]][['colorHigh']],
+                                     'na.value'=allScales[[a]][['colorNA_value']]))
+                  if(diverging) scale.args.optional <- c(scale.args.optional, list('mid'=allScales[[a]][['colorMid']],
+                                                                 'midpoint'=allScales[[a]][['colorMidpoint']]))
+                  scale.args.optional <- scale.args.optional[!sapply(scale.args.optional, isEmpty)]
+                  do.call(call.name, c(scale.args.mandatory, scale.args.optional))
+                })
+                gg <- gg + scale.call
+              }
+            }
+
+
           }
         }
         if(!is.null(gg)){

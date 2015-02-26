@@ -151,4 +151,12 @@ FontFamilyChoices <- c('Choose'='', FontFamilyChoices)
 
 FontFaceChoices <- c('Choose'='', "Plain"="plain","Bold"="bold","Italic"="italic","Bold & Italic"="bold.italic")
 
+getLegendLabelPositionChoices <- function(legend.layout.direction){
+  if(!is.null(legend.layout.direction) && legend.layout.direction=='horizontal') {
+    c('Default'='', 'Top'='top', 'Bottom'='bottom')
+  } else {
+    c('Default'='', 'Left'='left', 'Right'='right')
+  }
+}
+
 source('color.r', local=TRUE)

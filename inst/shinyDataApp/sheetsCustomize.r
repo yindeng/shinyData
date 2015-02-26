@@ -75,9 +75,7 @@ lapply(list(list(inputId='plotTitle', inputType='text'),
                   s <- if(!isEmpty(currentSheet)){
                     isolate(sheetList[[currentSheet]][['dynamicProperties']][[x$inputId]])
                   } else ''
-                  switch(x$inputType,
-                         'text'=updateTextInput(session, x$inputId, value=null2String(s)),
-                         'tabsetPanel'=updateTabsetPanel(session, x$inputId, selected=null2String(s)))
+                  updateInput(session, x$inputType, x$inputId, s)
                 }),
                 sessionEnv)
        })
@@ -237,13 +235,7 @@ lapply(list(list(inputId='textFamily', inputType='select'),
                     })
                   }
 
-                  switch(x$inputType,
-                         'numeric'=updateNumericInput(session, x$inputId, value=null2String(s)),
-                         'slider'=updateSliderInput(session, x$inputId, value=null2String(s)),
-                         'color'=updateColorInput(session, x$inputId, value=null2String(s)),
-                         'checkbox'=updateCheckboxInput(session, x$inputId, value=null2String(s)),
-                         'select'=updateSelectInput(session, x$inputId, selected=null2String(s)))
-
+                  updateInput(session, x$inputType, x$inputId, s)
                 }),
                 sessionEnv)
        })

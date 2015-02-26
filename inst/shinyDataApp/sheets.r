@@ -422,35 +422,94 @@ output$mapOrSetUI <- renderUI({
             aggFunchoices <- YFunChoices
             if(!(aggFun %in% aggFunchoices)) aggFunchoices[aggFun]=aggFun
 
-            fluidRow(
-              column(4,
-                     selectizeInput(inputId='aesField', label='Field',
-                                    choices=choices, selected=s, multiple=FALSE,
-                                    options = list(create = TRUE))
+            list(
+              fluidRow(
+                column(4,
+                       selectizeInput(inputId='aesField', label='Field',
+                                      choices=choices, selected=s, multiple=FALSE,
+                                      options = list(create = TRUE))
+                ),
+                column(4,
+                       checkboxInput(inputId='aesAggregate', label='Aggregate Field',
+                                     value=aes[['aesAggregate']]),
+                       conditionalPanel('input.aesAggregate==true',
+                                        selectizeInput(inputId='aesAggFun', label='By',
+                                                       choices=aggFunchoices,
+                                                       selected=aggFun, multiple=FALSE,
+                                                       options = list(create = TRUE))
+                       )
+
+                ),
+                column(4,
+                       conditionalPanel('output.canAesFieldBeContinuous==true',
+                                        radioButtons('aesDiscrete', 'Treat Field as',
+                                                     choices=c('Continuous'='continuous',
+                                                               'Discrete'='discrete'),
+                                                     selected=ifelse(aes[['aesDiscrete']], 'discrete', 'continuous'),
+                                                     inline=FALSE)
+                       )
+
+
+                )
               ),
-              column(4,
-                     checkboxInput(inputId='aesAggregate', label='Aggregate Field',
-                                   value=aes[['aesAggregate']]),
-                     conditionalPanel('input.aesAggregate==true',
-                                      selectizeInput(inputId='aesAggFun', label='By',
-                                                     choices=aggFunchoices,
-                                                     selected=aggFun, multiple=FALSE,
-                                                     options = list(create = TRUE))
-                     )
+
+              tags$hr(),
+
+              switch(currentAes,
+                     'aesBorderColor'=, 'aesColor'=list(
+                       h4('Color Specification'),
+                       conditionalPanel('input.aesDiscrete==null || input.aesDiscrete=="discrete"',
+                                        selectInput('discreteColorScaleType', 'Type of Scale',
+                                                    selected=aes[['scale']][['discreteColorScaleType']],
+                                                    choices=c('Choose'='', 'Hue'='hue', 'Brewer'='brewer', 'Grey'='grey'))
+                                      ),
+                       conditionalPanel('input.aesDiscrete=="continuous"',
+                                        checkboxInput('colorDiverging', 'Diverging Colors', value=aes[['scale']][['colorDiverging']]),
+                                        fluidRow(column(4,
+                                                        colorInput('colorLow', 'Low', value=aes[['scale']][['colorLow']])),
+                                                 column(4,
+                                                        conditionalPanel('input.colorDiverging == true',
+                                                                         colorInput('colorMid', 'Middle', value=aes[['scale']][['colorMid']]),
+                                                                         numericInput('colorMidpoint', 'Scale Center',
+                                                                                      value=aes[['scale']][['colorMidpoint']]))),
+                                                 column(4, colorInput('colorHigh', 'High', value=aes[['scale']][['colorHigh']]),
+                                                        colorInput('colorNA_value', 'Missing Data', value=aes[['scale']][['colorNA_value']]))
+                                                 )
+                       )
+                      )
 
               ),
-              column(4,
-                     conditionalPanel('output.canAesFieldBeContinuous==true',
-                                      radioButtons('aesDiscrete', 'Treat Field as',
-                                                   choices=c('Continuous'='continuous',
-                                                             'Discrete'='discrete'),
-                                                   selected=ifelse(aes[['aesDiscrete']], 'discrete', 'continuous'),
-                                                   inline=FALSE)
-                     )
-
-
-              )
+              if(currentAes != 'aesX' && currentAes != 'aesY'){
+                list(
+                  radioButtons('legendType', 'Legend:', selected=aes[['scale']][['legendType']],
+                               choices=c('Default'='','Custom'='custom','Hide'='none'), inline=TRUE),
+                  conditionalPanel('input.legendType != "none"',
+                                   textInput('legendTitle', 'Legend Title', value=aes[['scale']][['legendTitle']])),
+                  conditionalPanel('input.legendType == "custom"',
+                                   fluidRow(
+                                    column(6,
+                                           selectInput('title_position', 'Title Position', selected=aes[['scale']][['legend']][['title_position']],
+                                                       choices=c('Default'='', 'Top'='top', 'Bottom'='bottom', 'Left'='left', 'Right'='right')),
+                                           selectInput('direction', 'Layout Direction', selected=aes[['scale']][['legend']][['direction']],
+                                                       choices=c('Default'='', 'Horizontal'='horizontal', 'Vertical'='vertical')),
+                                           checkboxInput('reverse', 'Reverse', value=empty2FALSE(aes[['scale']][['legend']][['reverse']]))
+                                           ),
+                                    column(6,
+                                           selectInput('label_position', 'Label Position', selected=aes[['scale']][['legend']][['label_position']],
+                                                       choices=getLegendLabelPositionChoices(aes[['scale']][['legend']][['direction']])),
+                                           conditionalPanel('input.direction=="horizontal"',
+                                                            numericInput('label_hjust', 'Label Horizontal Adjust',
+                                                                         value=aes[['scale']][['legend']][['label_hjust']])),
+                                           conditionalPanel('input.direction=="" || input.direction=="vertical"',
+                                                            numericInput('label_vjust', 'Label Vertical Adjust',
+                                                                         value=aes[['scale']][['legend']][['label_vjust']]))
+                                           )
+                                    )
+                                   )
+                )
+              }
             )
+
           } else {
             switch(currentAes,
                    'aesLabel'=textInput('aesValue', '', value=aes[['aesValue']]),
@@ -467,22 +526,120 @@ output$mapOrSetUI <- renderUI({
   }
 })
 
-## set aesValue
-observeEvent(input$aesValue,
-             {
-  v <- input$aesValue
-  currentSheet <- (projProperties[['activeSheet']])
-  if(!isEmpty(currentSheet)){
-    currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-    if(!isEmpty(currentLayer)){
-      currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
-      if(!isEmpty(currentAes)){
-        sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesValue']] <<- v
-      }
-    }
-  }
-})
 
+## upsert basic aes properties
+lapply(list(list(inputId='aesValue', inputType=''),
+            list(inputId='aesAggregate', inputType=''),
+            list(inputId='aesAggFun', inputType='')),
+       function(x){
+         assign(paste0('observer_', x$inputId, '_push'),
+                observeEvent(input[[x$inputId]], {
+                  v <- input[[x$inputId]]
+                  currentSheet <- (projProperties[['activeSheet']])
+                  if(!isEmpty(currentSheet)){
+                    currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
+                    if(!isEmpty(currentLayer)){
+                      currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
+                      if(!isEmpty(currentAes)){
+                        if(are.vectors.different(v,
+                                                 sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][[x$inputId]]))
+                          sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][[x$inputId]] <<- v
+                      }
+                    }
+                  }
+                }),
+                sessionEnv)
+
+       })
+
+## upsert aes scales
+lapply(list(list(inputId='legendType', inputType='', storage='scale'),
+            list(inputId='legendTitle', inputType='text', storage='scale'),
+            list(inputId='discreteColorScaleType', inputType='', storage='scale'),
+            list(inputId='colorDiverging', inputType='', storage='scale'),
+            list(inputId='colorLow', inputType='', storage='scale'),
+            list(inputId='colorMid', inputType='', storage='scale'),
+            list(inputId='colorMidpoint', inputType='', storage='scale'),
+            list(inputId='colorHigh', inputType='', storage='scale'),
+            list(inputId='colorNA_value', inputType='', storage='scale'),
+            list(inputId='title_position', inputType='', storage='legend'),
+            list(inputId='direction', inputType='', storage='legend'),
+            list(inputId='reverse', inputType='', storage='legend'),
+            list(inputId='label_position', inputType='select', storage='legend'),
+            list(inputId='label_hjust', inputType='', storage='legend'),
+            list(inputId='label_vjust', inputType='', storage='legend')
+            ),
+       function(x){
+         push.label <- paste0('observer_', x$inputId, '_push')
+         assign(push.label,
+                observeEvent(input[[x$inputId]], label=push.label, {
+                  v <- input[[x$inputId]]
+                  currentSheet <- (projProperties[['activeSheet']])
+                  if(!isEmpty(currentSheet)){
+                    currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
+                    if(!isEmpty(currentLayer)){
+                      currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
+                      if(!isEmpty(currentAes)){
+                        if(is.null(sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['scale']]))
+                          sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['scale']] <<- list()
+                        if(x$storage=='scale'){
+                          if(are.vectors.different(v,
+                              sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][[
+                                'aesList']][[currentAes]][['scale']][[x$inputId]]))
+                            sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][[
+                              'aesList']][[currentAes]][['scale']][[x$inputId]] <<- v
+                        } else {  # legend
+                          if(is.null(sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][[
+                            'aesList']][[currentAes]][['scale']][['legend']]))
+                            sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][[
+                              'aesList']][[currentAes]][['scale']][['legend']] <<- list()
+                          if(are.vectors.different(v,
+                                                   sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][[
+                                                     'aesList']][[currentAes]][['scale']][['legend']][[x$inputId]]))
+                            sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][[
+                              'aesList']][[currentAes]][['scale']][['legend']][[x$inputId]] <<- v
+
+                          if(x$inputId=='direction'){
+                            label.pos <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][[
+                              'aesList']][[currentAes]][['scale']][['legend']][['label_position']]
+                            choices <- getLegendLabelPositionChoices(v)
+                            if(!isEmpty(label.pos) && !label.pos %in% choices){
+                              label.pos <- choices[1]
+                              sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][[
+                                'aesList']][[currentAes]][['scale']][['legend']][['label_position']] <<- label.pos
+                            }
+                            updateSelectInput(session, 'label_position', selected=label.pos, choices=choices)
+                          }
+                        }
+
+
+                      }
+                    }
+                  }
+                }),
+                sessionEnv)
+
+         if(isEmpty(x$inputType)) return()
+         assign(paste0('observer_', x$inputId, '_pull'),
+                observeEvent(updateInput[[x$inputId]], {
+                  currentSheet <- projProperties[['activeSheet']]
+                  s <- ''
+                  if(!isEmpty(currentSheet)){
+                    currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
+                    if(!isEmpty(currentLayer)){
+                      currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
+                      if(!isEmpty(currentAes)){
+                        scales <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['scale']]
+                        s <- if(x$storage=='scale') scales[[x$inputId]] else scales[['legend']][[x$inputId]]
+                      }
+                    }
+                  }
+
+                  updateInput(session, x$inputType, x$inputId, s)
+
+                }),
+                sessionEnv)
+       })
 
 ## set aes field
 observe({
@@ -524,7 +681,13 @@ observe({
                          'aesY'={
                            sheetList[[currentSheet]][['dynamicProperties']][['plotYlab']] <<- fieldName
                            triggerUpdateInput('plotYlab')
-                         }
+                         },
+{
+  if(is.null(sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['scale']]))
+    sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['scale']] <<- list()
+  sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['scale']][['legendTitle']] <<- fieldName
+  triggerUpdateInput('legendTitle')
+}
                          )
 
                 }
@@ -558,24 +721,6 @@ outputOptions(output, "canAesFieldBeContinuous", suspendWhenHidden=FALSE)
 
 ## set aes aggregate
 observe({
-  v <- input$aesAggregate
-  if(!is.null(v)){
-    isolate({
-      currentSheet <- (projProperties[['activeSheet']])
-      if(!isEmpty(currentSheet)){
-        currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-        if(!isEmpty(currentLayer)){
-          currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
-          if(!isEmpty(currentAes)){
-            sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesAggregate']] <<- v
-          }
-        }
-      }
-    })
-  }
-
-})
-observe({
   updateInput[['aesAggregate']]
   isolate({
     currentSheet <- (projProperties[['activeSheet']])
@@ -597,21 +742,6 @@ observe({
 
 
 ## set aes agg fun
-observe({
-  v <- input$aesAggFun
-  isolate({
-    currentSheet <- (projProperties[['activeSheet']])
-    if(!isEmpty(currentSheet)){
-      currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
-      if(!isEmpty(currentLayer)){
-        currentAes <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['activeAes']]
-        if(!isEmpty(currentAes)){
-          sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesAggFun']] <<- v
-        }
-      }
-    }
-  })
-})
 observe({
   updateInput[['aesAggFun']]
   isolate({

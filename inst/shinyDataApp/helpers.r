@@ -74,6 +74,9 @@ null2String <- function(x){
 empty2NULL <- function(x){
   ifempty(x,NULL)
 }
+empty2FALSE <- function(x){
+  ifempty(x,FALSE)
+}
 
 getDefaultMeasures <- function(dat){
   names(dat)[sapply(dat, function(x) typeof(x)=="double")]
@@ -206,6 +209,18 @@ createNewSheetObj <- function(name='Sheet', withPlotLayer=TRUE){
       'outputDataframe'=NULL,
       'layerList'=if(withPlotLayer) list('Plot'=createNewLayer()) else list(),
       'activeLayer'='Plot'))
+}
+
+updateInput <- function(session, inputType, inputId, value){
+  value <- null2String(value)
+  switch(inputType,
+         'numeric'=updateNumericInput(session, inputId, value=value),
+         'text'=updateTextInput(session, inputId, value=value),
+         'slider'=updateSliderInput(session, inputId, value=value),
+         'color'=updateColorInput(session, inputId, value=value),
+         'checkbox'=updateCheckboxInput(session, inputId, value=value),
+         'tabsetPanel'=updateTabsetPanel(session, inputId, selected=value),
+         'select'=updateSelectInput(session, inputId, selected=value))
 }
 
 
