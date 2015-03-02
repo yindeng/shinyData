@@ -163,11 +163,11 @@ shinyUI(navbarPage(
                             ),
                           br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br()
                         ),
-                 tabPanel('Filters', value='sheetTabFilters',
-                          selectizeInput(inputId='filterField', label='Field',
-                                         choices=NULL, multiple=FALSE),
-                          br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br()
-                  ),
+                  #                  tabPanel('Filters', value='sheetTabFilters',
+                  #                           selectizeInput(inputId='filterField', label='Field',
+                  #                                          choices=NULL, multiple=FALSE),
+                  #                           br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br()
+                  #                   ),
 
                  tabPanel('Customize', value='sheetTabCustomize',
                           textareaInput(inputId = 'plotTitle', label="Plot Title", value="",
@@ -227,8 +227,8 @@ shinyUI(navbarPage(
                tags$hr(),
                fluidRow(
                  column(4,
-                        selectInput(inputId='outputTypeList', label='Output Type',
-                                    choices=c('Table'='table','Plot'='plot'), selected='plot'),
+                        #selectInput(inputId='outputTypeList', label='Output Type',
+                        #            choices=c('Table'='table','Plot'='plot'), selected='plot'),
                         radioButtons('autoRefresh', label='',
                                      choices=c('Auto Refresh'='refresh','Pause Refreshing'='pause'), selected='refresh')
                         ),
@@ -318,14 +318,14 @@ shinyUI(navbarPage(
            ),
 
 
-  tabPanel(title='Settings',
-
-           if(!extrafontsImported){
-             list(actionButton('importFonts', 'Import System Fonts'),
-                  helpText('Import fonts from the operating system so that they are available for shinyData. This can take a few minutes.'))
-           }
-
-  ),
+  #   tabPanel(title='Settings',
+  #
+  #            if(!extrafontsImported){
+  #              list(actionButton('importFonts', 'Import System Fonts'),
+  #                   helpText('Import fonts from the operating system so that they are available for shinyData. This can take a few minutes.'))
+  #            }
+  #
+  #   ),
 
   tags$head(tags$script(src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"),
             tags$style(type='text/css', "button { margin-top: 20px; }"),
