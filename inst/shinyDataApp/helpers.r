@@ -77,6 +77,9 @@ empty2NULL <- function(x){
 empty2FALSE <- function(x){
   ifempty(x,FALSE)
 }
+empty2TRUE <- function(x){
+  ifempty(x,TRUE)
+}
 
 getDefaultMeasures <- function(dat){
   names(dat)[sapply(dat, function(x) typeof(x)=="double")]

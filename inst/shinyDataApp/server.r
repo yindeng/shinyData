@@ -359,28 +359,41 @@ shinyServer(function(input, output, session) {
                     do.call(guide.name, guide)
                   }
                 })
-                scale.call <- switch(a, 'aesColor'=, 'aesFill'=if(aes.map[[a]][['aesDiscrete']]){ # discrete
-                  if(!isEmpty(allScales[[a]][['discreteColorScaleType']])){
-                    call.name <- paste('scale', tolower(substring(a, 4)), allScales[[a]][['discreteColorScaleType']], sep='_')
-                    switch(allScales[[a]][['discreteColorScaleType']],
-                           'brewer'={
-                             scale.args.optional <- c(scale.args.optional, list('palette'=allScales[[a]][['colorBrewerPallete']]))
-                             scale.args.optional <- scale.args.optional[!sapply(scale.args.optional, isEmpty)]
-                             do.call(call.name, c(scale.args.mandatory, scale.args.optional))
-                           }
-                          )
-                  }
-                } else {  # continuous
-                  diverging <- allScales[[a]][['colorDiverging']]
-                  call.name <- paste('scale', tolower(substring(a, 4)), if(diverging) 'gradient2' else 'gradient', sep='_')
-                  scale.args.optional <- c(scale.args.optional, list('low'=allScales[[a]][['colorLow']], 'high'=allScales[[a]][['colorHigh']],
-                                     'na.value'=allScales[[a]][['colorNA_value']]))
-                  if(diverging) scale.args.optional <- c(scale.args.optional, list('mid'=allScales[[a]][['colorMid']],
-                                                                 'midpoint'=allScales[[a]][['colorMidpoint']]))
+                call.name <- ''
+                call.name12 <- paste('scale', tolower(substring(a, 4)), sep='_')
+                call.name.default <- paste(call.name12, if(aes.map[[a]][['aesDiscrete']]) 'discrete' else 'continuous', sep='_')
+                switch(a,
+                       'aesLineType'={call.name <- call.name.default},
+                       'aesShape'={call.name <- call.name.default
+                                   scale.args.optional <- c(scale.args.optional, list('solid'=allScales[[a]][['shapeSolid']]))},
+                       'aesSize'={call.name <- call.name.default
+                                  scale.args.optional <- c(scale.args.optional, list('range'=allScales[[a]][['sizeRange']]))},
+                       'aesColor'=, 'aesFill'=
+                         if(aes.map[[a]][['aesDiscrete']]){ # discrete
+                           call.name <- paste(call.name12,
+                                              if(isEmpty(allScales[[a]][['discreteColorScaleType']])) 'discrete' else allScales[[a]][['discreteColorScaleType']],
+                                              sep='_')
+                           switch(null2String(allScales[[a]][['discreteColorScaleType']]),
+                                  'brewer'={
+                                    scale.args.optional <- c(scale.args.optional, list('palette'=allScales[[a]][['colorBrewerPallete']]))
+                                  }
+                           )
+                         } else {  # continuous
+                           diverging <- allScales[[a]][['colorDiverging']]
+                           call.name <- paste(call.name12, if(diverging) 'gradient2' else 'gradient', sep='_')
+                           scale.args.optional <- c(scale.args.optional, list('low'=allScales[[a]][['colorLow']], 'high'=allScales[[a]][['colorHigh']],
+                                                                              'na.value'=allScales[[a]][['colorNA_value']]))
+                           if(diverging) scale.args.optional <- c(scale.args.optional, list('mid'=allScales[[a]][['colorMid']],
+                                                                                            'midpoint'=allScales[[a]][['colorMidpoint']]))
+
+                         }
+                )
+
+                if(call.name!=''){
                   scale.args.optional <- scale.args.optional[!sapply(scale.args.optional, isEmpty)]
-                  do.call(call.name, c(scale.args.mandatory, scale.args.optional))
-                })
-                gg <- gg + scale.call
+                  scale.call <- do.call(call.name, c(scale.args.mandatory, scale.args.optional))
+                  gg <- gg + scale.call
+                }
               }
             }
 

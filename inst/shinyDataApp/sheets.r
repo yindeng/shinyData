@@ -456,6 +456,8 @@ output$mapOrSetUI <- renderUI({
               tags$hr(),
 
               switch(currentAes,
+                     'aesShape'=checkboxInput('shapeSolid', 'Solid Shapes', value=empty2TRUE(aes[['scale']][['shapeSolid']])),
+                     'aesSize'=sliderInput('sizeRange', 'Size Range', min=0, max=50, value=ifempty(aes[['scale']][['sizeRange']], c(1,6))),
                      'aesBorderColor'=, 'aesColor'=list(
                        h4('Color Specification'),
                        conditionalPanel('input.aesDiscrete==null || input.aesDiscrete=="discrete"',
@@ -560,6 +562,8 @@ lapply(list(list(inputId='legendType', inputType='', storage='scale'),
             list(inputId='legendTitle', inputType='text', storage='scale'),
             list(inputId='discreteColorScaleType', inputType='', storage='scale'),
             list(inputId='colorBrewerPallete', inputType='', storage='scale'),
+            list(inputId='shapeSolid', inputType='', storage='scale'),
+            list(inputId='sizeRange', inputType='', storage='scale'),
             list(inputId='colorDiverging', inputType='', storage='scale'),
             list(inputId='colorLow', inputType='', storage='scale'),
             list(inputId='colorMid', inputType='', storage='scale'),
