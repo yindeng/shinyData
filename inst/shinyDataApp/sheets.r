@@ -1013,13 +1013,13 @@ canLatexPNG <- tryCatch(length(make.png(tabS)), error=function(e) FALSE)
 output$sheetOutput <- renderUI({
   currentSheet <- projProperties[['activeSheet']]
   if(!isEmpty(currentSheet)){
-    switch(sheetList[[currentSheet]][['dynamicProperties']][['outputType']],
+    switch(null2String(sheetList[[currentSheet]][['dynamicProperties']][['outputType']]),
            'table'=if(canLatexPNG) imageOutput('sheetOutputTable') else {
              tags$div(
                HTML(paste(capture.output(Hmisc::html(sheetList[[currentSheet]][['tableR']]())), collapse=" "))
              )
            },
-           'plot'=plotOutput('ggplot'))
+           plotOutput('ggplot'))
   }
 
 })
