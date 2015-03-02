@@ -359,8 +359,17 @@ shinyServer(function(input, output, session) {
                     do.call(guide.name, guide)
                   }
                 })
-                scale.call <- switch(a, 'aesColor'=, 'aesFill'=if(aes.map[[a]][['aesDiscrete']]){
-
+                scale.call <- switch(a, 'aesColor'=, 'aesFill'=if(aes.map[[a]][['aesDiscrete']]){ # discrete
+                  if(!isEmpty(allScales[[a]][['discreteColorScaleType']])){
+                    call.name <- paste('scale', tolower(substring(a, 4)), allScales[[a]][['discreteColorScaleType']], sep='_')
+                    switch(allScales[[a]][['discreteColorScaleType']],
+                           'brewer'={
+                             scale.args.optional <- c(scale.args.optional, list('palette'=allScales[[a]][['colorBrewerPallete']]))
+                             scale.args.optional <- scale.args.optional[!sapply(scale.args.optional, isEmpty)]
+                             do.call(call.name, c(scale.args.mandatory, scale.args.optional))
+                           }
+                          )
+                  }
                 } else {  # continuous
                   diverging <- allScales[[a]][['colorDiverging']]
                   call.name <- paste('scale', tolower(substring(a, 4)), if(diverging) 'gradient2' else 'gradient', sep='_')

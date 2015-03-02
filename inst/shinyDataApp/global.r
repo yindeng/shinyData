@@ -159,4 +159,11 @@ getLegendLabelPositionChoices <- function(legend.layout.direction){
   }
 }
 
+brewer.mat <- RColorBrewer::brewer.pal.info
+palettes.all <- rownames(brewer.mat)
+BrewerPaletteChoices <- list('Choose'='',
+  'Sequential'=palettes.all[brewer.mat[,'category']=='seq'],
+  'Diverging'=palettes.all[brewer.mat[,'category']=='div'],
+  'Qualitative'=palettes.all[brewer.mat[,'category']=='qual'])
+
 source('color.r', local=TRUE)
