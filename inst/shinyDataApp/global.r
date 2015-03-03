@@ -1,4 +1,4 @@
-
+ProductionMode <- FALSE
 ## conditional calculated field: mutate and ddply; see documentation for ddply
 ## groups: use selectInput with multiple=TRUE and selectize = FALSE
 ## http://stackoverflow.com/questions/3418128/how-to-convert-a-factor-to-an-integer-numeric-without-a-loss-of-information
@@ -8,12 +8,17 @@
 
 #options(error = browser)
 # NULL, browser, etc.
-options(shiny.error=NULL)
-# options(shiny.error=function() {
-#   ## skip validation errors
-#   if(!inherits(eval.parent(expression(e)), "validation")) browser()
-# })
-options(shiny.trace = FALSE)  # change to TRUE for trace
+#options(shiny.error=NULL)
+if(ProductionMode){
+  options(shiny.error=NULL)
+} else {
+  options(shiny.error=function() {
+    ## skip validation errors
+    if(!inherits(eval.parent(expression(e)), "validation")) browser()
+  })
+}
+
+#options(shiny.trace = FALSE)  # change to TRUE for trace
 #options(shiny.reactlog=TRUE)
 options(shiny.maxRequestSize = 100*1024^2)  # Set the upload limit to 100MB
 ## see https://groups.google.com/forum/#!topic/shiny-discuss/2wgIG3dOEZI
@@ -36,9 +41,9 @@ InternalY <- '..y..'
 
 GeomChoices <- c('Text'='text', 'Bar'='bar','Line'='line',
                  'Area'='area',  'Point'='point',
-                 'Path'='path','Polygon'='polygon',
-                 'Boxplot'='boxplot')
-StatChoices <- c('Identity'='identity','Count'='bin','Summary'='summary','Boxplot'='boxplot')
+                 'Path'='path', 'Polygon'='polygon',
+                 'Boxplot'='boxplot', 'Density Curve'='density')
+StatChoices <- c('Identity'='identity','Count'='bin','Summary'='summary','Boxplot'='boxplot','Density'='density')
 UnitChoices <- c('Normalized Parent Coordinates'='npc', 'Centimeters'='cm', 'Inches'='inches',
                  'Millimeters'='mm', 'Points'='points', 'Lines of Text'='lines',
                  'Font Height'='char')
@@ -89,6 +94,12 @@ getAesChoices <- function(geom, stat='identity'){
                                                 'Line Type'='aesLineType',
                                                 'Grouping'='aesGroup'),
                                      'Color'=c('Alpha'='aesAlpha')
+                     ),
+                     'density'=list('Coordinates'=c('X'='aesX'),
+                                'Common'=c('Color'='aesColor','Size'='aesSize',
+                                           'Line Type'='aesLineType',
+                                           'Grouping'='aesGroup'),
+                                'Color'=c('Alpha'='aesAlpha')
                      )
         ),
 
@@ -100,6 +111,12 @@ getAesChoices <- function(geom, stat='identity'){
                                           'Alpha'='aesAlpha')
                      ),
                      'identity'=list('Coordinates'=c('X'='aesX','Y'='aesY'),
+                                     'Common'=c('Color'='aesColor','Size'='aesSize',
+                                                'Line Type'='aesLineType'),
+                                     'Color'=c('Border Color'='aesBorderColor',
+                                               'Alpha'='aesAlpha')
+                     ),
+                     'density'=list('Coordinates'=c('X'='aesX'),
                                      'Common'=c('Color'='aesColor','Size'='aesSize',
                                                 'Line Type'='aesLineType'),
                                      'Color'=c('Border Color'='aesBorderColor',
@@ -135,6 +152,15 @@ getAesChoices <- function(geom, stat='identity'){
                                          'Color'=c('Border Color'='aesBorderColor',
                                                    'Alpha'='aesAlpha')
                          )
+        ),
+
+        'density'=switch(stat,
+                      'density'=list('Coordinates'=c('X'='aesX'),
+                                     'Common'=c('Color'='aesColor','Size'='aesSize',
+                                                'Line Type'='aesLineType'),
+                                     'Color'=c('Border Color'='aesBorderColor',
+                                               'Alpha'='aesAlpha')
+                      )
         )
 
   )

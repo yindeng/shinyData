@@ -198,6 +198,7 @@ shinyServer(function(input, output, session) {
               }
               temp
             }, simplify=FALSE)
+            #browser()
             aes.current <- aes.current[sapply(aes.current,
                                               function(x) {
                                                 isSetting <- !are.vectors.different(x[['aesMapOrSet']],'set')
@@ -206,7 +207,7 @@ shinyServer(function(input, output, session) {
 
             borderColor <- aes.current[['aesBorderColor']]
             aes.current[['aesBorderColor']] <- NULL
-            if(geom %in% c('bar','area','boxplot')){
+            if(geom %in% c('bar','area','boxplot','density')){
               aes.current[['aesFill']] <- aes.current[['aesColor']]
               aes.current[['aesColor']] <- borderColor
             }
@@ -272,6 +273,7 @@ shinyServer(function(input, output, session) {
               agg.exp <- parse(text=agg.str)[[1]]
               groupBy <- unique(c(rr,cc,sapply(aes.map[sapply(aes.map, function(x) !(x[['aesAggregate']]))],
                                                function(x) x[['aesField']])))
+              #validate(need(!isEmpty(groupBy), 'Please provide at least one field that is not being aggregated.'))
               datLayer <- eval(bquote(datSheet[, .(agg.exp), by=.(groupBy)]))
 
               if(currentLayer=='Plot'){

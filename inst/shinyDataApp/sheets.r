@@ -58,7 +58,7 @@ observe({
 
 
       if(!is.null(mDat)){
-        outType <- (sheetList[[currentSheet]][['dynamicProperties']][['outputType']])
+        outType <- ifnull(sheetList[[currentSheet]][['dynamicProperties']][['outputType']], 'plot')
         if(outType=='table'){
           #             if(combineMeasures && !is.null(facets)){
           #               outTable <- cast(mDat, facets, sum)
@@ -668,9 +668,12 @@ observe({
                 v <- null2String(sheetList[[currentSheet]][['dynamicProperties']][['layerList']][['Plot']][['aesList']][[currentAes]][['aesField']])
               }
               is.measure <- v %in% sheetList[[currentSheet]][['measuresR']]()
+              statType <- sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['statType']]
+              notAggregate <- are.vectors.different(statType, 'identity') && (currentAes=='aesX' || currentAes=='aesY')
               sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesIsFieldMeasure']] <<-
                 is.measure  ## just for capturing this information to customize choices for agg fun
-              sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesAggregate']] <<- is.measure
+              sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[
+                currentLayer]][['aesList']][[currentAes]][['aesAggregate']] <<- is.measure && (!notAggregate)
               sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesAggFun']] <<- if(is.measure) 'sum' else 'length'
               sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][[currentAes]][['aesDiscrete']] <<- !is.measure
               sapply(c('aesAggregate','aesAggFun','aesDiscrete'), triggerUpdateInput)
@@ -822,6 +825,16 @@ observe({
   })
 })
 
+setStatType <- function(currentSheet, currentLayer, value){
+  sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['statType']] <<- value
+  if(!isEmpty(value) && value!='identity'){
+    ## no aggregation on x, y when stat is not identity
+    sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][['aesX']][['aesAggregate']] <<- FALSE
+    sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['aesList']][['aesY']][['aesAggregate']] <<- FALSE
+    triggerUpdateInput('aesAggregate')
+  }
+}
+
 ## set Mark Type / geom
 observe({
   v <- input$markList
@@ -833,8 +846,7 @@ observe({
         if(!isEmpty(currentLayer)){
           sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['geom']] <<- v
           # set default stat type & position
-          sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['statType']] <<-
-            switch(v, 'boxplot'='boxplot', 'identity')
+          setStatType(currentSheet, currentLayer, switch(v, 'boxplot'='boxplot', 'density'='density', 'identity'))
           triggerUpdateInput('layerStatType')
           sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['layerPositionType']] <<-
             switch(v, 'bar'='dodge', 'identity')
@@ -867,8 +879,7 @@ observe({
       if(!isEmpty(currentSheet)){
         currentLayer <- (sheetList[[currentSheet]][['dynamicProperties']][['activeLayer']])
         if(!isEmpty(currentLayer)){
-
-          sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['statType']] <<- v
+          setStatType(currentSheet, currentLayer, v)
         }
       }
     }
