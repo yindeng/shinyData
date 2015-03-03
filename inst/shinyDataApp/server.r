@@ -207,7 +207,7 @@ shinyServer(function(input, output, session) {
 
             borderColor <- aes.current[['aesBorderColor']]
             aes.current[['aesBorderColor']] <- NULL
-            if(geom %in% c('bar','area','boxplot','density')){
+            if(geom %in% c('bar','area','boxplot','density','smooth')){
               aes.current[['aesFill']] <- aes.current[['aesColor']]
               aes.current[['aesColor']] <- borderColor
             }

@@ -846,7 +846,7 @@ observe({
         if(!isEmpty(currentLayer)){
           sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['geom']] <<- v
           # set default stat type & position
-          setStatType(currentSheet, currentLayer, switch(v, 'boxplot'='boxplot', 'density'='density', 'identity'))
+          setStatType(currentSheet, currentLayer, switch(v, 'boxplot'='boxplot', 'density'='density', 'smooth'='smooth', 'identity'))
           triggerUpdateInput('layerStatType')
           sheetList[[currentSheet]][['dynamicProperties']][['layerList']][[currentLayer]][['layerPositionType']] <<-
             switch(v, 'bar'='dodge', 'identity')

@@ -42,8 +42,10 @@ InternalY <- '..y..'
 GeomChoices <- c('Text'='text', 'Bar'='bar','Line'='line',
                  'Area'='area',  'Point'='point',
                  'Path'='path', 'Polygon'='polygon',
-                 'Boxplot'='boxplot', 'Density Curve'='density')
-StatChoices <- c('Identity'='identity','Count'='bin','Summary'='summary','Boxplot'='boxplot','Density'='density')
+                 'Boxplot'='boxplot', 'Density Curve'='density',
+                 'Smoother'='smooth')
+StatChoices <- c('Identity'='identity','Count'='bin','Summary'='summary','Boxplot'='boxplot','Density'='density',
+                 'Smoother'='smooth')
 UnitChoices <- c('Normalized Parent Coordinates'='npc', 'Centimeters'='cm', 'Inches'='inches',
                  'Millimeters'='mm', 'Points'='points', 'Lines of Text'='lines',
                  'Font Height'='char')
@@ -161,6 +163,15 @@ getAesChoices <- function(geom, stat='identity'){
                                      'Color'=c('Border Color'='aesBorderColor',
                                                'Alpha'='aesAlpha')
                       )
+        ),
+
+        'smooth'=switch(stat,
+                         'smooth'=list('Coordinates'=c('X'='aesX','Y'='aesY'),
+                                        'Common'=c('Color'='aesColor','Size'='aesSize',
+                                                   'Line Type'='aesLineType','Grouping'='aesGroup'),
+                                        'Color'=c('Border Color'='aesBorderColor',
+                                                  'Alpha'='aesAlpha')
+                         )
         )
 
   )
