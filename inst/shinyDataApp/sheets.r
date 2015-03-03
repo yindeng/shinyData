@@ -484,7 +484,7 @@ output$mapOrSetUI <- renderUI({
                       )
 
               ),
-              if(currentAes != 'aesX' && currentAes != 'aesY'){
+              if(currentAes != 'aesX' && currentAes != 'aesY' && currentAes != 'aesGroup'){
                 list(
                   radioButtons('legendType', 'Legend:', selected=aes[['scale']][['legendType']],
                                choices=c('Default'='','Custom'='custom','Hide'='none'), inline=TRUE),
