@@ -67,7 +67,7 @@ loadProject <- function(file, replaceOrMerge='replace'){
     if(is.null(datList[[di]])){ # new data
       datList[[di]] <<- DatClass$new('staticProperties'=allData$dl[[di]][['staticProperties']])
       datList[[di]][['dynamicProperties']] <<- reactiveValues()
-
+      setDatReactives(di)
     }
     for(n in names(allData$dl[[di]][['dynamicProperties']])){
       x <- allData$dl[[di]][['dynamicProperties']][[n]]
@@ -89,7 +89,6 @@ loadProject <- function(file, replaceOrMerge='replace'){
         datList[[di]][['dynamicProperties']][[n]] <<- x
       }
     }
-    datList[[di]]$setDatDependencies()
   }
 
   for(si in names(allData$sl)){

@@ -5,7 +5,7 @@ shinyServer(function(input, output, session) {
 
   sessionEnv <- environment()
   projProperties <- reactiveValues('activeDat'='')
-  sessionProperties <- reactiveValues()
+  sessionProperties <- reactiveValues('runDatCode'=0)
   updateInput <- reactiveValues('activeDat'=0,'datName'=0,'activeField'=0,'fieldName'=0,'measures'=0,
                                 'activeSheet'=0,'sheetName'=0,'sheetDatId'=0,'combineMeasures'=0,
                                 'sheetColumns'=0,'sheetRows'=0,'sheetOutput'=0,'sheetPlotLayer'=0,
@@ -65,6 +65,99 @@ shinyServer(function(input, output, session) {
       x
     } else c('')
   })
+
+  datUpdated <- function(currentDat){
+    dat <- datList[[currentDat]][['datRaw']]()
+    if(!isEmpty(dat)){
+      ## need to adjust fieldsList to be consistent with the new dat
+      newFields <- names(dat)
+      if(length(newFields)){
+        fieldsList <- datList[[currentDat]][['dynamicProperties']][['fieldsList']]
+        measures <- datList[[currentDat]][['dynamicProperties']][['measures']]
+        if(is.null(fieldsList)) fieldsList <- list()
+        if(is.null(measures)) measures <- c()
+
+        # delete deprecated fields
+        deleted <- setdiff(names(fieldsList), newFields)
+        for(nn in deleted){
+          fieldsList[[nn]] <- NULL
+        }
+        measures <- setdiff(measures, deleted)
+
+        # add new fields
+        added <- setdiff(newFields, names(fieldsList))
+        for(nn in added){
+          fieldsList[[nn]] <- reactiveValues('name'=nn, 'type'=typeof(dat[[nn]]))
+        }
+        measures <- c(measures, getDefaultMeasures(dat, added))
+
+        datList[[currentDat]][['dynamicProperties']][['fieldsList']] <<- fieldsList
+        datList[[currentDat]][['dynamicProperties']][['measures']] <<- measures
+
+        activeField <- datList[[currentDat]][['dynamicProperties']][['activeField']]
+        if(isEmpty(activeField) || !(activeField %in% newFields)){
+          datList[[currentDat]][['dynamicProperties']][['activeField']] <<- names(fieldsList)[1]
+        }
+      }
+    }
+  }
+
+  setDatReactives <- function(currentDat){
+    datList[[currentDat]][['fieldNames']] <<- reactive({
+      if(length(datList[[currentDat]][['dynamicProperties']][['fieldsList']])){
+        x <- names(datList[[currentDat]][['dynamicProperties']][['fieldsList']])
+        names(x) <- make.unique(sapply(datList[[currentDat]][['dynamicProperties']][['fieldsList']],
+                                       function(y) y[['name']]), sep='_')
+        x
+      } else c()
+    })
+
+    datList[[currentDat]][['datRaw']] <<- reactive({
+      dat <- NULL
+      if(datList[[currentDat]][['staticProperties']][['type']]=='code'){
+        sessionProperties$runDatCode
+        isolate({
+          code <- datList[[currentDat]][['dynamicProperties']][['datCode']]
+          if(!isEmpty(code)){
+            dat <- tryCatch(eval(parse(text=code), envir=getDatSheetEnv()),
+                            error=function(e) {
+                              showshinyalert(session,'datCodeAlert',e$message,styleclass='warning')
+                              NULL
+                            })
+          }
+        })
+      } else {
+        dat <- datList[[currentDat]][['dynamicProperties']][['dat']]
+      }
+      dat
+    })
+    datList[[currentDat]][['datR']] <<- reactive({
+      dat <- datList[[currentDat]][['datRaw']]()
+      if(!is.null(dat)){
+        dat <- forceMeasures(dat,
+                             datList[[currentDat]][['dynamicProperties']][['measures']])
+        label(dat, self=FALSE) <- names(datList[[currentDat]][['fieldNames']]())
+        if(is.data.table(dat)) dat else as.data.table(dat)
+      }
+    })
+
+    measureName <- 'MeasureNames'
+    datList[[currentDat]][['moltenDat']] <<- reactive({
+      if(!isEmpty(datList[[currentDat]][['dynamicProperties']][['measures']])){
+        melt(datList[[currentDat]][['datR']](),
+             measure.vars=datList[[currentDat]][['dynamicProperties']][['measures']],
+             variable.name=measureName)
+      }
+    })
+    datList[[currentDat]][['moltenNames']] <<- reactive({
+      x <- setdiff.c(datList[[currentDat]][['fieldNames']](),
+                     datList[[currentDat]][['dynamicProperties']][['measures']])
+      x[measureName] <- measureName
+      x['MeasureValues'] <- MoltenMeasuresName
+      x
+    })
+  }
+
   setAesReactives <- function(currentSheet, currentLayer, currentAes){
       sheetList[[currentSheet]][['dynamicProperties'
                                  ]][['layerList']][[currentLayer]][['aesList']][[currentAes]][['canFieldBeContinuous']] <<- reactive({
@@ -460,6 +553,19 @@ shinyServer(function(input, output, session) {
 
   }
 
+  addDat <- function(dat=NULL, name=NULL, type='file'){
+    currentDat <- paste('dat_',newGuid(),sep='')
+    existingNames <- names(datListNames())
+    ## make sure the new name is different
+    newName <- make.unique(c(existingNames, ifempty(name, 'Data')), sep='_')[length(existingNames)+1]
+
+    datList[[currentDat]] <<- createNewDatClassObj(dat, name=newName,
+                                              nameOriginal=name, type=type)
+    setDatReactives(currentDat)
+    datUpdated(currentDat)
+    projProperties[['activeDat']] <<- currentDat
+    triggerUpdateInput('activeDat')
+  }
   addSheet <- function(){
     newSheet <- paste("Sheet_",newGuid(),sep="")
     existingNames <- names(sheetListNames())
@@ -490,7 +596,25 @@ shinyServer(function(input, output, session) {
     FALSE
   }
 
-
+  getDatSheetEnv <- function(){
+    env <- new.env(parent = globalenv())
+    nn <- sheetListNames()
+    for(n in names(nn)){
+      ## using local is essential to make delayedAssign work
+      local({
+        nId <- nn[n]
+        local(delayedAssign(n, sheetList[[nId]][['plotR']](), assign.env=env))
+      })
+    }
+    nn <- datListNames()
+    for(n in names(nn)){
+      local({
+        nId <- nn[n]
+        local(delayedAssign(n, datList[[nId]][['datR']](), assign.env=env))
+      })
+    }
+    env
+  }
 
 
 

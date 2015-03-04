@@ -72,7 +72,7 @@ observe({
   s <- if(!isEmpty(currentDoc)){
     isolate(docList[[currentDoc]][['rmd']])
   } else ''
-  updateAceEditor(session, 'rmd', value=null2String(s))
+  updateAceEditor(session, 'rmd', value=ifempty(s, '\n')) # bug in updateAceEditor: won't update with ""
 })
 
 
@@ -85,25 +85,7 @@ observe({
 #   text
 # }
 
-getDatSheetEnv <- function(){
-  env <- new.env(parent = globalenv())
-  nn <- sheetListNames()
-  for(n in names(nn)){
-    ## using local is essential to make delayedAssign work
-    local({
-      nId <- nn[n]
-      local(delayedAssign(n, sheetList[[nId]][['plotR']](), assign.env=env))
-    })
-  }
-  nn <- datListNames()
-  for(n in names(nn)){
-    local({
-      nId <- nn[n]
-      local(delayedAssign(n, datList[[nId]][['datR']](), assign.env=env))
-    })
-  }
-  env
-}
+
 
 ## preview output
 output$rmdOutput <- renderUI({

@@ -54,18 +54,26 @@ shinyUI(navbarPage(
                selectInput(inputId="datList", label="", choices=NULL),
 
                tags$hr(),
-
-               fileInput1('file', 'Add Text File',
+               fileInput1('file', 'Add Data Source from Text File',
                          accept=c('text/csv',
                                   'text/comma-separated-values,text/plain',
-                                  '.csv'))
+                                  '.csv')),
 
-
+               tags$hr(),
+               actionButton('addDatCode', 'Add Data Source with R Code')
              ),
              mainPanel(
                textInput('datName', 'Data Source Name'),
 
                tags$hr(),
+
+               conditionalPanel('output.currentDatType=="code"',
+                                shinyalert('datCodeAlert', auto.close.after = 10),
+                        aceEditor('datCode', mode='r', value='', cursorId="datCodeCursor",
+                                  selectionId='datCodeSelection', wordWrap=TRUE),
+                        actionButton('runDatCode', 'Run'),
+                        tags$hr()
+               ),
 
                selectizeInput(inputId="measures", label="Measures",
                               choices=NULL, multiple=TRUE,

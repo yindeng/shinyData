@@ -1,4 +1,4 @@
-ProductionMode <- FALSE
+ProductionMode <- TRUE
 ## conditional calculated field: mutate and ddply; see documentation for ddply
 ## groups: use selectInput with multiple=TRUE and selectize = FALSE
 ## http://stackoverflow.com/questions/3418128/how-to-convert-a-factor-to-an-integer-numeric-without-a-loss-of-information

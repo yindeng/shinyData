@@ -81,8 +81,9 @@ empty2TRUE <- function(x){
   ifempty(x,TRUE)
 }
 
-getDefaultMeasures <- function(dat){
-  names(dat)[sapply(dat, function(x) typeof(x)=="double")]
+getDefaultMeasures <- function(dat, fields=NULL){
+  if(is.null(fields)) fields <- names(dat)
+  fields[sapply(dat, function(x) typeof(x)=="double")]
 }
 
 getDefaultFieldsList <- function(dat){
@@ -132,59 +133,12 @@ forceMeasures <<- function(d, measures){
 refList <- setRefClass("refList")
 names.refList <- function(x) ls(x)[-1] # get rid of "getClass"
 
-DatClass <- setRefClass("DatClass", fields=c("staticProperties","dynamicProperties","datR","fieldNames","moltenDat","moltenNames"),
-                        methods=list(setDatDependencies=function(){
-                          fieldNames <<- reactive({
-                            if(length(dynamicProperties[['fieldsList']])){
-                              x <- names(dynamicProperties[['fieldsList']])
-                              names(x) <- make.unique(sapply(dynamicProperties[['fieldsList']],
-                                                             function(y) y[['name']]), sep='_')
-                              x
-                            } else c()
-                          })
-                          datR <<- reactive({
-                            if(is.null(dynamicProperties[['dat']])){
-                              ## fetch from database etc.
-
-                            } else {
-                              dat <- forceMeasures(dynamicProperties[['dat']],
-                                             dynamicProperties[['measures']])
-                              label(dat, self=FALSE) <- names(fieldNames())
-                              if(is.data.table(dat)) dat else as.data.table(dat)
-                            }
-                          })
-
-                          measureName <- 'MeasureNames'
-                          moltenDat <<- reactive({
-                            if(!isEmpty(dynamicProperties[['measures']])){
-                              melt(datR(), measure.vars=dynamicProperties[['measures']],
-                                   variable.name=measureName)
-                            }
-                          })
-                          moltenNames <<- reactive({
-                            x <- setdiff.c(fieldNames(), dynamicProperties[['measures']])
-                            x[measureName] <- measureName
-                            x['MeasureValues'] <- MoltenMeasuresName
-                            x
-                          })
-                        },
-                        removeDatDependencies=function(){
-                          datR <<- NULL; fieldNames <<- NULL; moltenDat <<- NULL; moltenNames <<- NULL
-                        }))
+DatClass <- setRefClass("DatClass", fields=c("staticProperties","dynamicProperties",
+                                            "datRaw", "datR","fieldNames","moltenDat","moltenNames"))
 
 createNewDatClassObj <- function(dat=NULL, name='Data', nameOriginal=NULL, type='file'){
-  x <- DatClass$new('staticProperties'=list('type'=type, 'nameOriginal'=nameOriginal))
-  if(is.null(dat)){
-    x[['dynamicProperties']] <- reactiveValues('fieldsList'=list())
-  } else {
-    activeField <- if(length(names(dat))) names(dat)[1] else ''
-    x[['dynamicProperties']] <- reactiveValues('dat'=dat, 'name'=name,
-                                               'fieldsList'=getDefaultFieldsList(dat),
-                                               'activeField'=activeField,
-                                               'measures'=getDefaultMeasures(dat))
-  }
-  x$setDatDependencies()
-  x
+  DatClass$new('staticProperties'=list('type'=type, 'nameOriginal'=nameOriginal),
+                    'dynamicProperties'=reactiveValues('dat'=dat, 'name'=name))
 }
 
 

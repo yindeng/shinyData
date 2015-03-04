@@ -12,6 +12,42 @@ observe({
                     selected=isolate(projProperties[['activeDat']]))
 })
 
+output$currentDatType <- reactive({
+  currentDat <- projProperties[['activeDat']]
+  s <- if(!isEmpty(currentDat)){
+    isolate(datList[[currentDat]][['staticProperties']][['type']])
+  } else ''
+  null2String(s)
+})
+outputOptions(output, "currentDatType", suspendWhenHidden=FALSE)
+
+
+## R code
+observeEvent(input$datCode, {
+  v <- input$datCode
+  currentDat <- (projProperties[['activeDat']])
+  if(!isEmpty(currentDat)){
+    datList[[currentDat]][['dynamicProperties']][['datCode']] <<- v
+  }
+})
+observe({
+  updateInput[['datCode']]
+  currentDat <- projProperties[['activeDat']]
+  s <- if(!isEmpty(currentDat)){
+    isolate(datList[[currentDat]][['dynamicProperties']][['datCode']])
+  } else ''
+  updateAceEditor(session, 'datCode', value=ifempty(s, '\n')) # bug in updateAceEditor: won't update with ""
+})
+observeEvent(input$runDatCode, {
+  ## invalidate datList[[currentDat]][['datRaw']]
+  sessionProperties[['runDatCode']] <- sessionProperties[['runDatCode']] + 1
+
+  currentDat <- (projProperties[['activeDat']])
+  if(!isEmpty(currentDat)){
+    datUpdated(currentDat)
+  }
+})
+
 
 ## modify dat source name
 observe({
@@ -129,18 +165,15 @@ observe({
   isolate({
     if (!is.null(inFile)){
       dat  <- fread(inFile$datapath, header="auto", sep="auto")
-      fileN <- paste('file_',newGuid(),sep='')
-      existingNames <- names(datListNames())
-      ## make sure the new name is different
-      newName <- make.unique(c(existingNames, inFile$name), sep='_')[length(existingNames)+1]
-
-      datList[[fileN]] <<- createNewDatClassObj(dat, name=newName,
-                                                nameOriginal=inFile$name, type='file')
-      projProperties[['activeDat']] <<- fileN
-      triggerUpdateInput('activeDat')
+      addDat(dat, name=inFile$name, type='file')
     }
   })
 
+})
+
+## add with R code
+observeEvent(input$addDatCode, {
+  addDat(type='code')
 })
 
 output$uploadingTextFile <- reactive({
@@ -151,9 +184,12 @@ outputOptions(output, "uploadingTextFile", suspendWhenHidden=FALSE)
 output$datPreview <- renderDataTable({
   currentDat <- projProperties[['activeDat']]
   if(!isEmpty(currentDat)){
-    datPrev <- copy(datList[[currentDat]][['datR']]())  # use of copy is necessary since setnames modify by reference
-    setnames(datPrev, names(datList[[currentDat]][['fieldNames']]()))
-    datPrev
+    dat <- datList[[currentDat]][['datR']]()
+    if(!is.null(dat)){
+      datPrev <- copy(dat)  # use of copy is necessary since setnames modify by reference
+      setnames(datPrev, names(datList[[currentDat]][['fieldNames']]()))
+      datPrev
+    }
   }
 })
 
