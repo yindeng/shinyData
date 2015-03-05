@@ -51,7 +51,7 @@ shinyUI(navbarPage(
            sidebarLayout(
              sidebarPanel(
 
-               selectInput(inputId="datList", label="", choices=NULL),
+               selectInput(inputId="datList", label=NULL, choices=NULL),
 
                tags$hr(),
                fileInput1('file', 'Add Data Source from Text File',
@@ -60,7 +60,7 @@ shinyUI(navbarPage(
                                   '.csv')),
 
                tags$hr(),
-               actionButton('addDatCode', 'Add Data Source with R Code')
+               actionButton('addDatCode', 'Add Data Source with R Code', styleclass="primary")
              ),
              mainPanel(
                textInput('datName', 'Data Source Name'),
@@ -71,7 +71,7 @@ shinyUI(navbarPage(
                                 shinyalert('datCodeAlert', auto.close.after = 10),
                         aceEditor('datCode', mode='r', value='', cursorId="datCodeCursor",
                                   selectionId='datCodeSelection', wordWrap=TRUE),
-                        actionButton('runDatCode', 'Run'),
+                        actionButton('runDatCode', 'Run', styleclass="primary"),
                         tags$hr()
                ),
 
@@ -103,19 +103,19 @@ shinyUI(navbarPage(
            sidebarLayout(
              sidebarPanel(
                fluidRow(
-                 column(6, selectInput(inputId='sheetList', label='', choices=NULL, selected='')),
+                 column(6, selectInput(inputId='sheetList', label=NULL, choices=NULL, selected='')),
                  column(6, fluidRow(
-                   actionButton(inputId='addSheet', label='Add Sheet', styleclass="primary", size="small"),
-                   actionButton(inputId='deleteSheet', label='Delete Sheet', styleclass="danger", size="small")
+                   actionButton(inputId='addSheet', label='Add Sheet', styleclass="primary", size="small", css.class='btn-aligned-select'),
+                   actionButton(inputId='deleteSheet', label='Delete Sheet', styleclass="danger", size="small", css.class='btn-aligned-select')
                  ))
                ),
                fluidRow(
-                 column(6, selectInput(inputId='layerList', label='', choices=NULL, selected='', selectize=FALSE, size=3)),
+                 column(6, selectInput(inputId='layerList', label=NULL, choices=NULL, selected='', selectize=FALSE, size=3)),
                  column(6, fluidRow(
-                   actionButton(inputId='addLayer', label='Add Overlay', styleclass="primary", size="small"),
-                   actionButton(inputId='bringToTop', label='Bring to Top', styleclass="primary", size="small"),
+                   actionButton(inputId='addLayer', label='Add Overlay', styleclass="primary", size="small", css.class='btn-aligned-select'),
+                   actionButton(inputId='bringToTop', label='Bring to Top', styleclass="primary", size="small", css.class='btn-aligned-select'),
                    conditionalPanel('input.layerList!="Plot"',
-                                    actionButton(inputId='deleteLayer', label='Delete Overlay', styleclass="danger", size="small")
+                                    actionButton(inputId='deleteLayer', label='Delete Overlay', styleclass="danger", size="small", css.class='btn-aligned-select')
                                     )
                    ))
                  ),
@@ -155,7 +155,7 @@ shinyUI(navbarPage(
 
                           fluidRow(
                             column(4,
-                                   selectInput(inputId='aesList', label='',
+                                   selectInput(inputId='aesList', label=NULL,
                                                choices=NULL, selectize=FALSE, size=15)
                                    ),
                             column(8,
@@ -269,10 +269,10 @@ shinyUI(navbarPage(
            sidebarLayout(
              sidebarPanel(
                fluidRow(
-                 column(3, selectInput(inputId='docList', label='', choices=NULL, selected='')),
+                 column(3, selectInput(inputId='docList', label=NULL, choices=NULL, selected='')),
                  column(9, fluidRow(
-                   actionButton(inputId='addDoc', label='Add Document', styleclass="primary", size="small"),
-                   actionButton(inputId='deleteDoc', label='Delete Document', styleclass="danger", size="small")
+                   actionButton(inputId='addDoc', label='Add Document', styleclass="primary", size="small", css.class='btn-aligned-select'),
+                   actionButton(inputId='deleteDoc', label='Delete Document', styleclass="danger", size="small", css.class='btn-aligned-select')
                  ))
                ),
 
@@ -284,15 +284,15 @@ shinyUI(navbarPage(
 
                           checkboxInput('withRChunk', label='Insert with R chunk enclosure', value=TRUE),
                           fluidRow(
-                            column(6, selectInput(inputId='datNameToInsert', label='', choices=NULL, selected='')),
+                            column(6, selectInput(inputId='datNameToInsert', label=NULL, choices=NULL, selected='')),
                             column(6, fluidRow(
-                              actionButton(inputId='insertDatName', label='Insert Data', styleclass="primary", size="small")
+                              actionButton(inputId='insertDatName', label='Insert Data', styleclass="primary", size="small", css.class='btn-aligned-select')
                             ))
                           ),
                           fluidRow(
-                            column(6, selectInput(inputId='sheetNameToInsert', label='', choices=NULL, selected='')),
+                            column(6, selectInput(inputId='sheetNameToInsert', label=NULL, choices=NULL, selected='')),
                             column(6, fluidRow(
-                              actionButton(inputId='insertSheetName', label='Insert Sheet', styleclass="primary", size="small")
+                              actionButton(inputId='insertSheetName', label='Insert Sheet', styleclass="primary", size="small", css.class='btn-aligned-select')
                             ))
                           ),
                           br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br()
@@ -329,15 +329,16 @@ shinyUI(navbarPage(
   #   tabPanel(title='Settings',
   #
   #            if(!extrafontsImported){
-  #              list(actionButton('importFonts', 'Import System Fonts'),
+  #              list(actionButton('importFonts', 'Import System Fonts', styleclass="primary"),
   #                   helpText('Import fonts from the operating system so that they are available for shinyData. This can take a few minutes.'))
   #            }
   #
   #   ),
 
+  #
+
   tags$head(tags$script(src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"),
-            tags$style(type='text/css', "button { margin-top: 20px; }"),
-            tags$style(type='text/css', "#openSampleProj { margin-top: 0px; }")
+            tags$style(type='text/css', ".btn-aligned-select { margin-bottom: 10px; } .btn-small {font-size:13px; padding:5px;}")
             )
 
 
