@@ -309,7 +309,7 @@ shinyServer(function(input, output, session) {
             validate(
               need(!is.null(aes.current[['aesX']]), label='X')
             )
-            if(stat=='identity'){
+            if(stat %in% c('identity', 'boxplot', 'smooth')){
               validate(
                 need(!is.null(aes.current[['aesY']]), label='Y')
               )
