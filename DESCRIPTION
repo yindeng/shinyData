@@ -1,10 +1,10 @@
 Package: shinyData
 Type: Package
-Title: An intuitive graphical user interface for interactive data analysis, visualization and presentation
-Version: 0.1.0.9002
+Title: A GUI application for interactive data analysis, visualization and presentation
+Version: 0.1
 Authors@R: "Yindeng Jiang <jiangyindeng@gmail.com> [aut, cre]"
 Description:
-  shinyData is intended to be an easy to use tool for interactive data analysis, visualization and presentation.
+  shinyData is an easy to use tool for interactive data analysis, visualization and presentation.
   It leverages the power of R and its vast collection of packages to allow users to efficiently perform common
   data tasks, such as slicing and dicing, aggregation, pattern recognition, visualization and more.
   Almost no knowledge of R programming is required to use shinyData.

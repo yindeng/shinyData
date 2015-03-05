@@ -1,9 +1,9 @@
-shinyData (Beta)
+shinyData
 =========
 
-[shinyData](https://github.com/yindeng/shinyData) is intended to be an easy to use tool for interactive data analysis, visualization and presentation. It leverages the power of R and its vast collection of packages to allow users to efficiently perform common data tasks, such as slicing and dicing, aggregation, visualization and more (usually referred to as "business intelligence"). Almost no knowledge of R programming is required to use shinyData.
+[shinyData](https://github.com/yindeng/shinyData) is an easy to use tool for interactive data analysis, visualization and presentation. It leverages the power of R and its vast collection of packages to allow users to efficiently perform common data tasks, such as slicing and dicing, aggregation, visualization and more (usually referred to as "business intelligence"). Almost no knowledge of R programming is required to use shinyData.
 
-Note: shinyData is currently under active development. Interested users are encouraged to try it out, but should not use it for production purposes.
+Current stable version: v0.1
 
 # Installation
 To run the web based version of shinyData without installing anything, simply go to https://roose.shinyapps.io/shinyData/. 
@@ -26,15 +26,17 @@ To quickly get a flavor of what shinyData can do, simply open one of the sample 
 
 # Feature Overview
 
-## Data extraction and basic manipulation
-Currently you can only load data from a text file. However, shinyData can auto-detect the presence of header row and common text delimiters (such as comma or tab), as well as skipping banners at the beginning of the file if any, thus requiring minimal input from the user.
+## Data extraction and manipulation
+shinyData supports loading data from a text file. It can auto-detect the presence of header row and common text delimiters (such as comma or tab), as well as skipping banners at the beginning of the file if any, thus requiring minimal input from the user.
+
+The other option of loading is by writing some R code. This gives the user a tremendous amount of flexibility. See the sample projects for some examples.
 
 After data is loaded, user can preview the data, customize the data source name and field names, and specify which fields should be considered measures. The implication of setting a field as measure is that it will allow for numerical aggregation on the field.
 
 ## Data aggregation
 The data aggregation in each plot layer is independent of each other, so it is possible to have different levels of granularity in the same plot. When you map a visual element (like X, Y, Color, etc) to a field in the data, you have the option to aggregate the field with the function selected from a list (or type in any R function that takes a vector and returns a single value). The aggregation is done conditional on all the fields that are mapped to in the current layer but not being aggregated, as well as any fields specified in facet columns or rows.
 
-When there is any aggregation done in the base "Plot" layer, the aggregated data table is automatically added to the list of data sources. This is very useful when a secondary aggregation is desired.
+When there is any aggregation done in the base "Plot" layer, the aggregated data table is automatically added to the list of data sources. This is useful when a secondary aggregation is desired.
 
 ## Visualization
 In general, visual elements can either be mapped to a field or set to a fixed value. The appearance of the graph is fully customizable. Customization can be specified at different levels and inherit through a tree-like structure. For example, "axis.title" inherits from "title", which in turn inherits from "text", so fonts set for "text" will automatically apply to "title" and "axis.title", but can be overwritten.
