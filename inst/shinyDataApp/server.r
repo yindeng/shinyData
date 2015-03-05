@@ -66,6 +66,27 @@ shinyServer(function(input, output, session) {
     } else c('')
   })
 
+  getDatSheetEnv <- function(excludeDat=NULL){
+    env <- new.env(parent = globalenv())
+    nn <- sheetListNames()
+    for(n in names(nn)){
+      ## using local is essential to make delayedAssign work
+      local({
+        nId <- nn[n]
+        local(delayedAssign(n, sheetList[[nId]][['plotR']](), assign.env=env))
+      })
+    }
+    nn <- setdiff.c(datListNames(), excludeDat)
+    for(n in names(nn)){
+      local({
+        nId <- nn[n]
+        local(delayedAssign(n, datList[[nId]][['datR']](), assign.env=env))
+      })
+    }
+    env
+  }
+
+
   datUpdated <- function(currentDat){
     dat <- datList[[currentDat]][['datRaw']]()
     if(!isEmpty(dat)){
@@ -119,7 +140,7 @@ shinyServer(function(input, output, session) {
         isolate({
           code <- datList[[currentDat]][['dynamicProperties']][['datCode']]
           if(!isEmpty(code)){
-            dat <- tryCatch(eval(parse(text=code), envir=getDatSheetEnv()),
+            dat <- tryCatch(eval(parse(text=code), envir=getDatSheetEnv(excludeDat=currentDat)),
                             error=function(e) {
                               showshinyalert(session,'datCodeAlert',e$message,styleclass='warning')
                               NULL
@@ -594,26 +615,6 @@ shinyServer(function(input, output, session) {
       }
     }
     FALSE
-  }
-
-  getDatSheetEnv <- function(){
-    env <- new.env(parent = globalenv())
-    nn <- sheetListNames()
-    for(n in names(nn)){
-      ## using local is essential to make delayedAssign work
-      local({
-        nId <- nn[n]
-        local(delayedAssign(n, sheetList[[nId]][['plotR']](), assign.env=env))
-      })
-    }
-    nn <- datListNames()
-    for(n in names(nn)){
-      local({
-        nId <- nn[n]
-        local(delayedAssign(n, datList[[nId]][['datR']](), assign.env=env))
-      })
-    }
-    env
   }
 
 

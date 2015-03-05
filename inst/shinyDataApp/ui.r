@@ -309,7 +309,7 @@ shinyUI(navbarPage(
                                      'ioslides'='ioslides_presentation',
                                      'Slidy'='slidy_presentation',
                                      'Beamer'='beamer_presentation'),
-                           selected=''),
+                           selected='pdf_document'),
 
                tags$hr(),
                tabsetPanel(id='rmdTabs',
