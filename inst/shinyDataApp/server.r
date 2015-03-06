@@ -399,21 +399,10 @@ shinyServer(function(input, output, session) {
                 isolate({
                   sheetNameDat <- convertSheetNameToDatName(sheetList[[currentSheet]][['dynamicProperties']][['name']])
                   if(is.null(datList[[currentSheet]])){
-                    datList[[currentSheet]] <<- createNewDatClassObj(outDf, name=sheetNameDat, type='sheet')
+                    addDat(outDf, name=sheetNameDat, type='sheet', id=currentSheet)
                   } else {
                     datList[[currentSheet]][['dynamicProperties']][['dat']] <<- outDf
-                    datList[[currentSheet]][['dynamicProperties']][['measures']] <<- intersect(datList[[currentSheet]][['dynamicProperties']][['measures']],
-                                                                                               getDefaultMeasures(outDf))
-                    ## add new fields, delete outdated fields, leave common fields alone since they might have user customizations
-                    newFields <- getDefaultFieldsList(outDf)
-                    oldList <- names(datList[[currentSheet]][['dynamicProperties']][['fieldsList']])
-                    newList <- names(newFields)
-                    for(n in setdiff(newList, oldList)){
-                      datList[[currentSheet]][['dynamicProperties']][['fieldsList']][[n]] <<- newFields[[n]]
-                    }
-                    for(n in setdiff(oldList, newList)){
-                      datList[[currentSheet]][['dynamicProperties']][['fieldsList']][[n]] <<- NULL
-                    }
+                    datUpdated(currentSheet)
                   }
                 })
               }
@@ -577,8 +566,8 @@ shinyServer(function(input, output, session) {
 
   }
 
-  addDat <- function(dat=NULL, name=NULL, type='file'){
-    currentDat <- paste('dat_',newGuid(),sep='')
+  addDat <- function(dat=NULL, name=NULL, type='file', id=NULL){
+    currentDat <- ifnull(id, paste('dat_',newGuid(),sep=''))
     existingNames <- names(datListNames())
     ## make sure the new name is different
     newName <- make.unique(c(existingNames, ifempty(name, 'Data')), sep='_')[length(existingNames)+1]
@@ -587,8 +576,10 @@ shinyServer(function(input, output, session) {
                                               nameOriginal=name, type=type)
     setDatReactives(currentDat)
     datUpdated(currentDat)
-    projProperties[['activeDat']] <<- currentDat
-    triggerUpdateInput('activeDat')
+    if(is.null(id)){
+      projProperties[['activeDat']] <<- currentDat
+      triggerUpdateInput('activeDat')
+    }
   }
   addSheet <- function(){
     newSheet <- paste("Sheet_",newGuid(),sep="")
