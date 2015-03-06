@@ -142,7 +142,10 @@ shinyServer(function(input, output, session) {
           if(!isEmpty(code)){
             dat <- tryCatch(eval(parse(text=code), envir=getDatSheetEnv(excludeDat=currentDat)),
                             error=function(e) {
-                              showshinyalert(session,'datCodeAlert',e$message,styleclass='warning')
+                              createAlert(session,'datCodeAlert',
+                                          title='Error in R code:',
+                                          message=e$message,
+                                          type='warning', dismiss=TRUE, append=FALSE)
                               NULL
                             })
           }

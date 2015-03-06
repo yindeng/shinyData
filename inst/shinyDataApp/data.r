@@ -57,14 +57,20 @@ observe({
     if(!isEmpty(currentDat)){
       if(!isEmpty(v) && isEmpty(datListNames()[v])){
         ## the second condition makes sure v is different
+
         ## update doc's rmd
         oldName <- paste('`', datList[[currentDat]][['dynamicProperties']][['name']], '`', sep='')
         newName <- paste('`', v, '`', sep='')
         sapply(names(docList), function(currentDoc){
           docList[[currentDoc]][['rmd']] <<- gsub(oldName, newName, docList[[currentDoc]][['rmd']], fixed=TRUE)
-          NULL
         })
         triggerUpdateInput('docRmd')
+        ## update dat R code
+        sapply(names(datList), function(currentDat){
+          datList[[currentDat]][['dynamicProperties']][['datCode']] <<-
+            gsub(oldName, newName, datList[[currentDat]][['dynamicProperties']][['datCode']], fixed=TRUE)
+        })
+        triggerUpdateInput('datCode')
 
         datList[[currentDat]][['dynamicProperties']][['name']] <<- v
       }

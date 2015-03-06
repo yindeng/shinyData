@@ -20,7 +20,7 @@ textareaInput <- function(inputId, label, value="", placeholder="", rows=2){
 
 shinyUI(navbarPage(
   id='mainNavBar',
-  title="shinyData (Beta)",
+  title="shinyData",
 
   tabPanel(title='Project',
 
@@ -68,7 +68,7 @@ shinyUI(navbarPage(
                tags$hr(),
 
                conditionalPanel('output.currentDatType=="code"',
-                                shinyalert('datCodeAlert', auto.close.after = 10),
+                                bsAlert('datCodeAlert'),
                         aceEditor('datCode', mode='r', value='', cursorId="datCodeCursor",
                                   selectionId='datCodeSelection', wordWrap=TRUE),
                         actionButton('runDatCode', 'Run', styleclass="primary"),
