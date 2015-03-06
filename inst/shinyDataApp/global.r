@@ -25,7 +25,7 @@ options(shiny.maxRequestSize = 100*1024^2)  # Set the upload limit to 100MB
 
 library(grid); library(shiny); library(ggplot2); library(Hmisc); library(uuid);
 library(tables); library(tools); library(png); library(data.table);
-library(shinysky); library(shinyBS); library(Cairo)
+library(shinysky); library(shinyBS); require(Cairo)
 library(knitr); library(rmarkdown); library(shinyAce); library(shinyTree)
 
 options(shiny.usecairo=TRUE)
