@@ -3,5 +3,6 @@
 .RData
 
 *~
+*.swp
 inst/shinyDataApp/shinyapps/
 inst/shinyDataApp/figure/
