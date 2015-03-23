@@ -1,4 +1,6 @@
 ProductionMode <- TRUE
+CloudVersion <- FALSE
+
 ## conditional calculated field: mutate and ddply; see documentation for ddply
 ## groups: use selectInput with multiple=TRUE and selectize = FALSE
 ## http://stackoverflow.com/questions/3418128/how-to-convert-a-factor-to-an-integer-numeric-without-a-loss-of-information
@@ -18,6 +20,7 @@ if(ProductionMode){
   })
 }
 
+options(stringsAsFactors = FALSE)
 #options(shiny.trace = FALSE)  # change to TRUE for trace
 #options(shiny.reactlog=TRUE)
 options(shiny.maxRequestSize = 100*1024^2)  # Set the upload limit to 100MB
@@ -27,6 +30,7 @@ library(grid); library(shiny); library(ggplot2); library(Hmisc); library(uuid);
 library(tables); library(tools); library(png); library(data.table);
 library(shinysky); library(shinyBS); require(Cairo)
 library(knitr); library(rmarkdown); library(shinyAce); library(shinyTree)
+library(shinyFiles)
 
 options(shiny.usecairo=TRUE)
 

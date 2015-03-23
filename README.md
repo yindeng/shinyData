@@ -62,7 +62,7 @@ Thanks to the simplicity and flexibility of [R Markdown](http://rmarkdown.rstudi
 ## Project management (Tab "Project")
 By saving the project to a file, user can pick up where he left off. User can also merge two projects together by selecting "Merge with existing work" when loading a project file.
 
->Due to the web-based nature of shinyData, currently you cannot save changes to an existing project file. Instead you need to download the project as a new file. We are working on overcoming this inconvenience when shinyData is run locally, so it essentially behaves more like a desktop application.
+>When shinyData is run locally, it behaves like a desktop application in that it can save changes to an existing project. In the cloud hosted version, you need to download any changed project as a new project file since the server has no access to the original project file due to security reasons.
 
 
 

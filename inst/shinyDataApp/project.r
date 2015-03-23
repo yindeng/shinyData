@@ -27,22 +27,41 @@ wasReactivevalues <- function(x){
   !is.null(attr(x, 'wasReavtive'))
 }
 
+saveProject <- function(file){
+  allData <- list(pp=shrink(projProperties),
+                  dl=lapply(datList, 
+                            function(d){
+                              list('staticProperties'=d[['staticProperties']],
+                                   'dynamicProperties'=shrink(d[['dynamicProperties']]))
+                            }),
+                  sl=lapply(sheetList, 
+                            function(d){
+                              list('dynamicProperties'=shrink(d[['dynamicProperties']]))
+                            }),
+                  docl=shrink(docList))
+  save(allData, file=file)
+}
+
+if(!CloudVersion){
+  dirRoots <- c('My Documents'=path.expand('~'), getVolumes()())
+  shinyFileChoose(input, 'loadProject', session=session, roots=dirRoots, filetypes=c('sData'))
+}
+observeEvent(input[['saveProject']],
+             {
+               saveProject(parseFilePaths(dirRoots, input[['loadProject']])$datapath)
+               createAlert(session,'saveProjectAlert',
+                                          title='',
+                                          message='Project saved!',
+                                          type='info', dismiss=TRUE, append=FALSE)
+
+             })
+
+
 output$downloadProject <- downloadHandler(
   filename = function() { 'MyProject.sData' },
   content = function(file) {
     isolate({
-
-      allData <- list(pp=shrink(projProperties),
-                      dl=lapply(datList, function(d){
-                        list('staticProperties'=d[['staticProperties']],
-                             'dynamicProperties'=shrink(d[['dynamicProperties']]))
-                      }),
-                      sl=lapply(sheetList, function(d){
-                        list('dynamicProperties'=shrink(d[['dynamicProperties']]))
-                      }),
-                      docl=shrink(docList))
-      save(allData, file=file)
-
+      saveProject(file)
     })
   }
 )
@@ -150,9 +169,16 @@ loadProject <- function(file, replaceOrMerge='replace'){
   updateTabsetPanel(session, 'mainNavBar', selected='Visualize')
 }
 
+
 observe({
   inFile <- input[['loadProject']]
+
   isolate({
+    if(!CloudVersion){
+      inFile <- parseFilePaths(dirRoots, inFile)
+      if(0==nrow(inFile)) inFile <- NULL
+    }
+    
     if (!is.null(inFile)){
       loadProject(file=inFile$datapath, replaceOrMerge=input[['loadProjectAction']])
     }

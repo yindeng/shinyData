@@ -17,6 +17,16 @@ textareaInput <- function(inputId, label, value="", placeholder="", rows=2){
     tags$textarea(id = inputId, placeholder = placeholder, rows = rows, value))
 }
 
+shinyFilesButton <- 
+  function (id, label, title, multiple, css.class="") 
+  {
+    tagList(singleton(tags$head(tags$script(src = "sF/shinyFiles.js"), 
+                                tags$link(rel = "stylesheet", type = "text/css", href = "sF/styles.css"), 
+                                tags$link(rel = "stylesheet", type = "text/css", href = "sF/fileIcons.css"))), 
+            tags$button(id = id, type = "button", class = paste("shinyFiles btn", css.class, sep=" "), 
+                        `data-title` = title, `data-selecttype` = ifelse(multiple, 
+                                                                         "multiple", "single"), as.character(label)))
+  }
 
 shinyUI(navbarPage(
   id='mainNavBar',
@@ -24,21 +34,37 @@ shinyUI(navbarPage(
 
   tabPanel(title='Project',
 
-           div(selectInput('sampleProj',
-                                list(actionButton('openSampleProj', 'Open', styleclass="primary", size="small"), 'Sample Project:'),
-                                choices=list.files('samples')),
-               class = "pull-right"),
-           br(),
+           fluidRow(
+                    column(6, 
+                           if(!CloudVersion){
+                             conditionalPanel('input.loadProject != null',
+                                              fluidRow(
+                                                       column(6, actionButton('saveProject', 'Save Project', styleclass="primary")),
+                                                       column(6, bsAlert('saveProjectAlert'))),
+                                              br())
+                           },
+                           downloadButton('downloadProject', 'Save Project to New File'),
 
-           downloadButton('downloadProject', 'Save Project to File'),
+                           tags$hr(),
 
-           tags$hr(),
+                           if(CloudVersion){
+                             fileInput1('loadProject', 'Import Project from File', accept=c('.sData'))
+                           } else {
+                             shinyFilesButton('loadProject', 'Open Project', title='Select a Project', multiple=FALSE, 
+                                              css.class="btn-primary")
+                           },
 
-           fileInput1('loadProject', 'Import Project from File', accept=c('.sData')),
-           radioButtons('loadProjectAction', '',
-                        choices=c('Replace existing work'='replace',
-                                  'Merge with existing work'='merge'),
-                        selected='replace', inline=FALSE),
+                           radioButtons('loadProjectAction', '',
+                                        choices=c('Replace existing work'='replace',
+                                                  'Merge with existing work'='merge'),
+                                        selected='replace', inline=FALSE)
+                           ),
+                    column(6, div(selectInput('sampleProj',
+                                              list(actionButton('openSampleProj', 'Open', styleclass="primary", size="small"), 'Sample Project:'),
+                                              choices=list.files('samples')),
+                                  class = "pull-right"),
+                           br())
+                    ),
 
            tags$hr(),
            includeMarkdown('md/about.md')
@@ -338,6 +364,7 @@ shinyUI(navbarPage(
   #
 
   tags$head(tags$script(src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"),
+            tags$script(src="page.js"),
             tags$style(type='text/css', ".btn-aligned-select { margin-bottom: 10px; } .btn-small {font-size:13px; padding:5px;}")
             )
 
