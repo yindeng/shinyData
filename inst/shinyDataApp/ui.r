@@ -20,7 +20,8 @@ textareaInput <- function(inputId, label, value="", placeholder="", rows=2){
 
 shinyUI(navbarPage(
   id='mainNavBar',
-  title="shinyData",
+  title=img(src="http://i.imgur.com/hG7Ltn2.png", alt="shinyData"),
+  windowTitle="shinyData",
 
   tabPanel(title='Project',
 
