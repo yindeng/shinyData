@@ -69,5 +69,8 @@ By saving the project to a file, user can pick up where he left off. User can al
 # Links
 shinyData Blog: https://shinydata.wordpress.com/
 
-ggplot2 online reference: http://docs.ggplot2.org/current/index.html
+ggplot2 Online Reference: http://docs.ggplot2.org/current/index.html
+
+# To Potential Contributors
+Please make your changes to the "develop" branch since we intend to keep the "master" branch only for stable releases. Feel free to submit your pull requests!
 
