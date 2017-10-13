@@ -444,8 +444,22 @@ shinyServer(function(input, output, session) {
             names(aes.args) <- tolower(substring(names(aes.map), 4)) # get rid of the 'aes' prefix
 
             aess <- do.call('aes_string', aes.args)
-            position <- do.call(paste('position', position, sep='_'),
-                                list(width=pWidth, height=pHeight))
+            if (position=='jitter'){
+              position <- do.call(paste('position', position, sep='_'),
+                                  list(width=pWidth, height=pHeight))
+            } else if (position=='dodge') {
+                position <- do.call(paste('position', position, sep='_'),
+                                    list(width=pWidth))
+            } else if (position=='stack') {
+                position <- do.call(paste('position', position, sep='_'),
+                                    list(vjust=pHeight))
+            } else if (position=='fill') {
+                position <- do.call(paste('position', position, sep='_'),
+                                    list(vjust=pHeight))
+            } else if (position=='identity') {
+                position <- do.call(paste('position', position, sep='_'),
+                                    list())
+            }
             #browser()
             if(is.null(gg)) gg <- ggplot()
             gg <- gg + do.call(paste('geom',geom,sep='_'),
